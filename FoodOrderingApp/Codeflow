@@ -1,0 +1,46 @@
+📱 CLIENT REQUEST
+    ↓
+🔐 JwtAuthFilter (Token Extract & Validate)
+    ↓
+🗄️ UserRepository (Database Call - findByUsername)
+    ↓
+👮 UserDetailsService (Load User & Roles)
+    ↓
+🔐 Spring Security (Role Checking - hasRole())
+    ↓
+🎯 CONTROLLER (Business Logic)
+    ↓
+🔄 SERVICE (Processing)
+    ↓
+🗄️ REPOSITORY (Database Operations)
+    ↓
+📦 RESPONSE (JSON Data)
+
+
+
+🔄 DETAILED FLOW:
+1. REQUEST ARRIVES
+JwtAuthFilter har request pakadta hai
+
+Authorization header check karta hai
+
+2. TOKEN VALIDATION
+JwtUtil token verify karta hai
+
+Username extract karta hai
+
+3. DATABASE CALL
+UserRepository.findByUsername() database call karta hai
+
+User object milta hai with role
+
+4. ROLE CHECKING
+Spring Security automatically role check karta hai
+
+hasRole("ADMIN") → database role se match karta hai
+
+5. AUTHENTICATION SET
+SecurityContext mein authentication set hota hai
+
+
+
