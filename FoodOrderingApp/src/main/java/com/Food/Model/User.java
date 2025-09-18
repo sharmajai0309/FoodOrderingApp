@@ -7,23 +7,14 @@ import java.util.List;
 
 import com.Food.dto.ResturantDto;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
 @Table(name = "users")
-@Data
+@Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -43,16 +34,22 @@ public class User {
 	private String password;
 	
 	//Enum for role
+	@Enumerated(EnumType.STRING)
 	private USER_ROLE role;
 	
 	
 	@OneToMany(cascade = CascadeType.ALL,mappedBy = "customer")
+	@JsonIgnore
+	@Builder.Default
 	private List<Order> orders = new ArrayList<>();
 	
-	@ElementCollection
-	private List<ResturantDto>favorite = new ArrayList<>();
+	@ManyToMany
+	@JoinTable(name = "user_favorite")
+	@Builder.Default
+	private List<Restaurant>favorite = new ArrayList<>();
 	
-	@OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL,orphanRemoval = true)
+	@Builder.Default
 	private List<Address> addresses = new ArrayList<>();
 	
 	

@@ -2,11 +2,8 @@ package com.Food.Model;
 
 import java.util.List;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,6 +22,7 @@ public class CartItem {
 	
 	
 	@ManyToOne
+	@JsonIgnore
 	private Cart cart;
 	
 	
@@ -36,7 +34,8 @@ public class CartItem {
 	
 	
 	private long totalPrize;
-	
+
+	@ElementCollection
 	private List<String>ingredients;
 	
 	

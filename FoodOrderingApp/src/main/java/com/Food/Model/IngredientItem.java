@@ -2,18 +2,18 @@ package com.Food.Model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 
 @Entity
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class IngredientItem {
@@ -26,10 +26,12 @@ public class IngredientItem {
 	
 	
 	@ManyToOne
+	@JsonIgnore
 	private IngredientCategory category;
 	
 	
 	@ManyToOne
+	@JsonIgnore
 	private Restaurant restaurant;
 	
 	private boolean inStock = true;

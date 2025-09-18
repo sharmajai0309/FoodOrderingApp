@@ -18,7 +18,7 @@ import com.Food.Model.User;
 import com.Food.Repository.ICartRepository;
 import com.Food.Repository.IUserRepository;
 import com.Food.Response.AuthResponse;
-import com.Food.Service.UserServiceImpl;
+import com.Food.Service.ServiceImpl.UserServiceImpl;
 import com.Food.request.LoginRequest;
 import com.Food.request.LoginResponse;
 

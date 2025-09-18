@@ -1,21 +1,16 @@
 package com.Food.Model;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "orders")
@@ -26,20 +21,22 @@ public class Order {
 	private Long id;
 	
 	@ManyToOne
+    @JsonIgnore
     private User customer;
 	
 	@ManyToOne
+    @JsonIgnore
     private Restaurant restaurant;
 	
     
     private Long totalAmount;
     private String orderStatus;
-    private Date createdAt;
+    private LocalDateTime createdAt;
     
     @ManyToOne
     private Address deliveryAddress;
     
-    @OneToMany
+    @OneToMany(mappedBy = "order",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<OrderItem> items;
     
 //    private Payment payment;

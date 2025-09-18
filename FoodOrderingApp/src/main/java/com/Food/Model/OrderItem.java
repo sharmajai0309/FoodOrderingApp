@@ -2,16 +2,12 @@ package com.Food.Model;
 
 import java.util.List;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,6 +16,10 @@ public class OrderItem {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Id
 	private Long id;
+
+	@JsonIgnore
+	@ManyToOne
+	private Order order;
 	
 	@ManyToOne
 	private Food food;
@@ -27,7 +27,8 @@ public class OrderItem {
 	private int quantity;
 	
 	private Long totalprice;
-	
+
+	@ElementCollection
 	private List<String> ingredients;
 
 }

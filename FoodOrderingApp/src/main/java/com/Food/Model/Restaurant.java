@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -15,12 +16,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
-@Data
+@Getter
+@Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Restaurant {
@@ -37,7 +38,7 @@ public class Restaurant {
 	private String cusineType;
 	
 	
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL,orphanRemoval = true)
 	private Address address;
 	
 	@Embedded
@@ -48,6 +49,8 @@ public class Restaurant {
 	
 	
 	@OneToMany(mappedBy = "restaurant" ,cascade = CascadeType.ALL,orphanRemoval = true)
+	@JsonIgnore
+	@Builder.Default
 	private List<Order> orders = new ArrayList<>();
 	
 	
@@ -55,12 +58,15 @@ public class Restaurant {
 	@Column(length =  1000)
 	private List<String> images;
 	
-	private LocalDateTime resgistrationDate;
-	
-	private Boolean open;
+	private LocalDateTime registrationDate;
+
+	@Builder.Default
+	private boolean open = false;
 	
 	
 	@OneToMany(mappedBy = "restaurant",cascade = CascadeType.ALL,orphanRemoval = true)
+	@JsonIgnore
+	@Builder.Default
 	private List<Food> foods  = new ArrayList<>();
 	
 	

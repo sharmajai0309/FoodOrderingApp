@@ -2,22 +2,30 @@ package com.Food.Model;
 
 import java.util.List;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
 @Entity
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Setter
+@Getter
 public class Address {
 	
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Id
 	private Long id;
+
+	@JsonIgnore
+	@ManyToOne
+	private User user;
+	private String street;
+	private String city;
+	private String zipCode;
+	private String country;
+
+
 
 }

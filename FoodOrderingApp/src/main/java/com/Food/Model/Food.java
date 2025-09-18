@@ -1,5 +1,6 @@
 package com.Food.Model;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -12,12 +13,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 
-@Data
+@Setter
+@Getter
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -42,19 +42,19 @@ public class Food {
 	
 	
 	
-	private Boolean isAvailable;
+	private Boolean isAvailable = true;
 	
 	@ManyToOne
 	private Restaurant restaurant;
 	
-	private Boolean isVegitarian;
+	private Boolean isVegetarian;
 	private Boolean isSeasonal;
 	
 	
 	@ManyToMany
 	private List<IngredientItem> ingredients = new ArrayList<>();
 	
-	private Date createdDate;
+	private LocalDateTime createdDate;
 	
 	
 	

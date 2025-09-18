@@ -1,17 +1,16 @@
 package com.Food.Model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
-@Data
+@Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Category {
@@ -26,7 +25,12 @@ public class Category {
 	private String name;
 	
 	@ManyToOne
+	@JsonIgnore
 	private Restaurant restaurant;
+
+	@JsonIgnore
+	@OneToMany(mappedBy = "foodcategory",cascade = CascadeType.ALL,orphanRemoval = true)
+	private List<Food> foods = new ArrayList<>();
 	
 	
 	
