@@ -32,7 +32,7 @@ public interface IResturantService {
 	public void deleteRestaurant(Long Restaurantid) throws EntityNotFoundException;
 
 	//Search Restaurant
-	public List<Restaurant>searchRestaurant();
+	public List<Restaurant> searchRestaurant(String searchedWord);
 	
 	
 	//find all Restaurant
@@ -43,11 +43,11 @@ public interface IResturantService {
 	
 	//find Restaurant By ID
 	public Restaurant findRestaurantById(Long Restaurantid) throws Exception ;
+
+	public List<Restaurant> getRestaurantByUserId(Long userId) throws EntityNotFoundException;
 	
-	public Restaurant getRestaurantByUserId(Long userId) throws EntityNotFoundException;
 	
-	
-	//Adding Restaurant to favourite list 
+	//Adding Restaurant to a favourite list
 	public ResturantDto addToFavourite(Long Restaurantid,User user) throws Exception;
 	
 	

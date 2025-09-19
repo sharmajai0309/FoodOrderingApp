@@ -25,7 +25,11 @@ public class webConfig {
 	
 	@Bean
 	public ModelMapper modelMapper() {
-		return new ModelMapper();
+		ModelMapper modelMapper = new ModelMapper();
+		// Configure to skip null values during mapping
+		modelMapper.getConfiguration()
+				.setSkipNullEnabled(true);
+		return modelMapper;
 	}
 	
 	

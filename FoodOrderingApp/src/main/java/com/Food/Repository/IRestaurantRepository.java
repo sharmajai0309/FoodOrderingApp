@@ -26,5 +26,8 @@ public interface IRestaurantRepository extends JpaRepository<Restaurant, Long> {
                 "LOWER(r.cusineType) LIKE LOWER(CONCAT('%', :searchQuery, '%'))")
         List<Restaurant> findBySearchQuery(@Param("searchQuery") String searchQuery);
 
+    @Query("SELECT r FROM Restaurant r WHERE r.open = true")
+    List<Restaurant> findAllOpenRestaurants();
+
 
 }

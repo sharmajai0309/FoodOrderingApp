@@ -1,14 +1,19 @@
 package com.Food.Service.ServiceImpl;
+
 import com.Food.Model.Restaurant;
 import com.Food.Model.User;
 import com.Food.Repository.IAddressRepository;
 import com.Food.Repository.IRestaurantRepository;
+import com.Food.Repository.IUserRepository;
 import com.Food.Service.IResturantService;
 import com.Food.Service.IUserServices;
 import com.Food.dto.ResturantDto;
 import com.Food.request.CreateRestaurantRequest;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -17,8 +22,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RestaurantServiceImpl implements IResturantService {
@@ -27,6 +36,8 @@ public class RestaurantServiceImpl implements IResturantService {
     private final IUserServices userService;
     private final IAddressRepository addressRepository;
     private final IRestaurantRepository restaurantRepository;
+    private final ModelMapper mapper;
+    private final IUserRepository userRepository;
 
     @Override
     @Transactional
@@ -46,47 +57,94 @@ public class RestaurantServiceImpl implements IResturantService {
     }
 
     @Override
+    @Transactional
     public Restaurant updateRestaurant(Long Restaurantid, CreateRestaurantRequest updatedRestaurant) throws Exception {
-        return null;
+        Restaurant restaurant = findRestaurantById(Restaurantid);
+        mapper.map(updatedRestaurant, restaurant);
+        return restaurantRepository.save(restaurant);
+
     }
 
     @Override
+    @Transactional
     public void deleteRestaurant(Long Restaurantid) throws EntityNotFoundException {
+        try {
+            userRepository.deleteById(123L);
+            log.info("Delete successful");
+        } catch (Exception e) {
+            log.error("User not found");
+            throw new EntityNotFoundException("User not found");
+        }
+
 
     }
 
     @Override
-    public List<Restaurant> searchRestaurant() {
-        return List.of();
+    @Transactional(readOnly = true)
+    public List<Restaurant> searchRestaurant(String searchedWord) {
+        List<Restaurant> bySearchQuery = restaurantRepository.findBySearchQuery(searchedWord);
+        return bySearchQuery;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<Restaurant> findAllRestaurants(Pageable pageable) {
-        return null;
+        return restaurantRepository.findAll(pageable);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Collection<Restaurant> findOpenRestaurants() {
-        return List.of();
+        List<Restaurant> restaurantList = restaurantRepository.findAll();
+        return restaurantList.stream()
+                .filter(Restaurant::isOpen)
+                .toList();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Restaurant findRestaurantById(Long Restaurantid) throws Exception {
-        return null;
+        Optional<Restaurant> byId = restaurantRepository.findById(Restaurantid);
+        if(byId.isEmpty()){
+            throw new Exception("Restaurant Not Found");
+        }
+        return byId.get();
     }
 
     @Override
-    public Restaurant getRestaurantByUserId(Long userId) throws EntityNotFoundException {
-        return null;
+    @Transactional(readOnly = true)
+    public List<Restaurant> getRestaurantByUserId(Long userId) throws EntityNotFoundException {
+        // JPQL Query
+        List<Restaurant> byOwnerId = restaurantRepository.findByOwnerId(userId);
+
+
+        //just to check native SQL performance
+        List<Restaurant> byOwnerIdsql = restaurantRepository.findByOwnerIdsql(userId);
+        log.info(byOwnerIdsql.toString());
+        return byOwnerId;
     }
 
     @Override
-    public ResturantDto addToFavourite(Long Restaurantid, User user) throws Exception {
-        return null;
+    @Transactional
+    public ResturantDto addToFavourite(Long restaurantId, User user) throws Exception {
+        Restaurant restaurant = findRestaurantById(restaurantId);
+        // Checking using ID
+        boolean alreadyFavorite = user.getFavorite().stream()
+                .anyMatch(fav -> fav.getId().equals(restaurantId));
+        if (alreadyFavorite) {
+            user.getFavorite().removeIf(fav -> fav.getId().equals(restaurantId));
+        } else {
+            user.getFavorite().add(restaurant);
+        }
+        userRepository.save(user);
+        return mapper.map(restaurant, ResturantDto.class);
     }
 
     @Override
-    public Restaurant updateRestaurantStatus(Long id) throws Exception {
-        return null;
+    @Transactional
+    public Restaurant updateRestaurantStatus(Long restaurantId) throws Exception {
+        Restaurant restaurant = findRestaurantById(restaurantId);
+        restaurant.setOpen(!restaurant.isOpen());
+        return restaurant;
     }
 }

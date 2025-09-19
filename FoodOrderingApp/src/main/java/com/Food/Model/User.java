@@ -1,9 +1,9 @@
 package com.Food.Model;
 
-import java.util.ArrayList;  
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-
-
+import java.util.Set;
 
 import com.Food.dto.ResturantDto;
 
@@ -46,13 +46,11 @@ public class User {
 	@ManyToMany
 	@JoinTable(name = "user_favorite")
 	@Builder.Default
-	private List<Restaurant>favorite = new ArrayList<>();
+	private Set<Restaurant> favorite = new HashSet<>();
 	
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL,orphanRemoval = true)
 	@Builder.Default
 	private List<Address> addresses = new ArrayList<>();
-	
-	
-	
+
 
 }

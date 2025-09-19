@@ -54,8 +54,6 @@ public class UserServiceImpl implements IUserServices,UserDetailsService{
         return repo.findByEmail(email);
     }
 
-    
-    
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         log.info("Entering loadUserByUsername with username: {}", username);
