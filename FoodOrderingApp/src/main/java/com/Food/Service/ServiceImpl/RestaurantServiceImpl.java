@@ -11,20 +11,18 @@ import com.Food.dto.ResturantDto;
 import com.Food.request.CreateRestaurantRequest;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 @Slf4j
@@ -59,7 +57,13 @@ public class RestaurantServiceImpl implements IResturantService {
     @Override
     @Transactional
     public Restaurant updateRestaurant(Long Restaurantid, CreateRestaurantRequest updatedRestaurant) throws Exception {
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Restaurant restaurant = findRestaurantById(Restaurantid);
+        User currentUser = userService.findByUsername(username);
+        if (!Objects.equals(restaurant.getOwner().getId(), currentUser.getId())) {
+            throw new Exception("Only restaurant owner can update this restaurant");
+        }
         mapper.map(updatedRestaurant, restaurant);
         return restaurantRepository.save(restaurant);
 
@@ -67,16 +71,17 @@ public class RestaurantServiceImpl implements IResturantService {
 
     @Override
     @Transactional
-    public void deleteRestaurant(Long Restaurantid) throws EntityNotFoundException {
-        try {
-            userRepository.deleteById(123L);
-            log.info("Delete successful");
-        } catch (Exception e) {
-            log.error("User not found");
-            throw new EntityNotFoundException("User not found");
+    public Boolean deleteRestaurant(User byUsername, Long Restaurantid) throws EntityNotFoundException {
+        Restaurant restaurant = restaurantRepository.findById(Restaurantid).orElseThrow();
+        long id = restaurant.getOwner().getId();
+        long id1 = byUsername.getId();
+        if(!Objects.equals(id, id1)){
+            return false;
         }
-
-
+        else{
+            restaurantRepository.delete(restaurant);
+            return true;
+        }
     }
 
     @Override
@@ -113,15 +118,20 @@ public class RestaurantServiceImpl implements IResturantService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Restaurant> getRestaurantByUserId(Long userId) throws EntityNotFoundException {
-        // JPQL Query
+    public List<ResturantDto> getRestaurantByUserId(Long userId) throws EntityNotFoundException {
+        log.info("Fetching restaurants for user ID: {}", userId);
+
+        // ✅ JPQL Query - Main results
         List<Restaurant> byOwnerId = restaurantRepository.findByOwnerId(userId);
 
-
-        //just to check native SQL performance
+        // ✅ Native SQL Query - Performance check
         List<Restaurant> byOwnerIdsql = restaurantRepository.findByOwnerIdsql(userId);
-        log.info(byOwnerIdsql.toString());
-        return byOwnerId;
+        log.info("Native SQL results count: {}", byOwnerIdsql.size());
+
+        // ✅ Convert to DTO
+        return byOwnerId.stream()
+                .map(restaurant -> mapper.map(restaurant, ResturantDto.class))
+                .collect(Collectors.toList());
     }
 
     @Override

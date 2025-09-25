@@ -4,8 +4,6 @@ package com.Food.Service;
 import java.util.Collection;
 import java.util.List;
 
-import javax.naming.OperationNotSupportedException;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -29,7 +27,7 @@ public interface IResturantService {
 	
 	
     //Delete Restaurant
-	public void deleteRestaurant(Long Restaurantid) throws EntityNotFoundException;
+	public Boolean deleteRestaurant(User byUsername, Long Restaurantid) throws EntityNotFoundException;
 
 	//Search Restaurant
 	public List<Restaurant> searchRestaurant(String searchedWord);
@@ -44,7 +42,7 @@ public interface IResturantService {
 	//find Restaurant By ID
 	public Restaurant findRestaurantById(Long Restaurantid) throws Exception ;
 
-	public List<Restaurant> getRestaurantByUserId(Long userId) throws EntityNotFoundException;
+	public List<ResturantDto> getRestaurantByUserId(Long userId) throws EntityNotFoundException;
 	
 	
 	//Adding Restaurant to a favourite list

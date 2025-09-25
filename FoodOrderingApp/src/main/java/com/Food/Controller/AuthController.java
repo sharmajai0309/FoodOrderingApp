@@ -87,7 +87,7 @@ public class AuthController {
      
         // FIXED: Generate token directly instead of incorrect authentication
         // We don't need to authenticate here since we just created the user
-        String generatedToken = jwtutil.createToken(savedUser.getEmail());
+        String generatedToken = jwtutil.createToken(savedUser.getUsername());
         log.info("JWT token generated for user: {}", savedUser.getUsername());
         
         log.info("Returning AuthResponse for user: {}", savedUser.getUsername());
