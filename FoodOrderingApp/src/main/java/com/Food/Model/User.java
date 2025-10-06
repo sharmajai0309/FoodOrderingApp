@@ -42,14 +42,16 @@ public class User {
 	@JsonIgnore
 	@Builder.Default
 	private List<Order> orders = new ArrayList<>();
-	
+
 	@ManyToMany
 	@JoinTable(name = "user_favorite")
 	@Builder.Default
+	@JsonIgnore
 	private Set<Restaurant> favorite = new HashSet<>();
-	
+
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL,orphanRemoval = true)
 	@Builder.Default
+	@JsonIgnore
 	private List<Address> addresses = new ArrayList<>();
 
 

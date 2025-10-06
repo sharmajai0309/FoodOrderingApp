@@ -55,6 +55,13 @@ public class UserServiceImpl implements IUserServices,UserDetailsService{
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<User> findUsers() {
+        List<User> all = repo.findAll();
+        return all;
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         log.info("Entering loadUserByUsername with username: {}", username);
         User user = findByUsername(username);

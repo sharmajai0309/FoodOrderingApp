@@ -50,26 +50,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(apiError);
     }
 
-    // ✅ Authentication Failed
-    @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<ApiError> handleAuthenticationException(AuthenticationException ex) {
-        ApiError apiError = new ApiError();
-        apiError.setError("AUTHENTICATION_FAILED");
-        apiError.setMessage("Authentication failed. Invalid credentials.");
-        apiError.setStatusCode(HttpStatus.UNAUTHORIZED);
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(apiError);
-    }
-
-    // ✅ Access Denied (Role based)
-    @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ApiError> handleAccessDeniedException(AccessDeniedException ex) {
-        ApiError apiError = new ApiError();
-        apiError.setError("ACCESS_DENIED");
-        apiError.setMessage("You don't have permission to access this resource.");
-        apiError.setStatusCode(HttpStatus.FORBIDDEN);
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(apiError);
-    }
-
     // ✅ User Not Found
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<ApiError> handleUsernameNotFoundException(UsernameNotFoundException ex) {
@@ -80,15 +60,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiError);
     }
 
-    // ✅ Generic Exception
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiError> handleGenericException(Exception ex) {
-        ApiError apiError = new ApiError();
-        apiError.setError("INTERNAL_SERVER_ERROR");
-        apiError.setMessage("Something went wrong. Please try again later.");
-        apiError.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiError);
-    }
     // ✅ 404 - Entity Not Found
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ApiResponse> handleEntityNotFound(EntityNotFoundException ex) {
@@ -154,12 +125,12 @@ public class GlobalExceptionHandler {
     }
 
     // ✅ NullPointerException (Special handling)
-    @ExceptionHandler(NullPointerException.class)
-    public ResponseEntity<ApiResponse> handleNullPointer(NullPointerException ex) {
-        log.error("Null pointer exception: ", ex);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponse.error("Data processing error occurred"));
-    }
+//    @ExceptionHandler(NullPointerException.class)
+//    public ResponseEntity<ApiResponse> handleNullPointer(NullPointerException ex) {
+//        log.error("Null pointer exception: ", ex);
+//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                .body(ApiResponse.error("Data processing error occurred"));
+//    }
     
 
     

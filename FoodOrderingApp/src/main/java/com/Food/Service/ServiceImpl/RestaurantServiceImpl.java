@@ -8,11 +8,14 @@ import com.Food.Repository.IUserRepository;
 import com.Food.Service.IResturantService;
 import com.Food.Service.IUserServices;
 import com.Food.dto.ResturantDto;
+import com.Food.exceptions.CustomException.RestaurantNotFoundException;
+import com.Food.exceptions.CustomException.UnauthorizedAccessException;
 import com.Food.request.CreateRestaurantRequest;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.internal.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -57,9 +60,12 @@ public class RestaurantServiceImpl implements IResturantService {
     @Override
     @Transactional
     public Restaurant updateRestaurant(Long Restaurantid, CreateRestaurantRequest updatedRestaurant) throws Exception {
-
+           log.info("int update method");
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        log.info(username);
         Restaurant restaurant = findRestaurantById(Restaurantid);
+        System.out.println(restaurant.getOwner());
+
         User currentUser = userService.findByUsername(username);
         if (!Objects.equals(restaurant.getOwner().getId(), currentUser.getId())) {
             throw new Exception("Only restaurant owner can update this restaurant");
@@ -106,15 +112,6 @@ public class RestaurantServiceImpl implements IResturantService {
                 .toList();
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public Restaurant findRestaurantById(Long Restaurantid) throws Exception {
-        Optional<Restaurant> byId = restaurantRepository.findById(Restaurantid);
-        if(byId.isEmpty()){
-            throw new Exception("Restaurant Not Found");
-        }
-        return byId.get();
-    }
 
     @Override
     @Transactional(readOnly = true)
@@ -150,11 +147,56 @@ public class RestaurantServiceImpl implements IResturantService {
         return mapper.map(restaurant, ResturantDto.class);
     }
 
+
+    //Update Restaurant Status
     @Override
     @Transactional
-    public Restaurant updateRestaurantStatus(Long restaurantId) throws Exception {
+    public Restaurant updateRestaurantStatus(Long restaurantId,User currentUser) throws Exception {
         Restaurant restaurant = findRestaurantById(restaurantId);
-        restaurant.setOpen(!restaurant.isOpen());
+//        Only Owner can update restaurant status
+
+        long id = restaurant.getOwner().getId();
+        long id1 = currentUser.getId();
+        if(!Objects.equals(id, id1)){
+            throw new Exception(
+                    "User " + currentUser.getId() + " is not authorized to update restaurant " + restaurantId);
+        }
+        else restaurant.setOpen(!restaurant.isOpen());
+        log.info("Restaurant {} status updated to {} by user {}",
+                restaurantId, restaurant.isOpen(), currentUser.getId());
+        // Automatic save by @Transactional
+        return restaurant;
+    }
+
+    //    find id without token info
+    @Override
+    public Restaurant findRestaurantById(Long restaurantId) throws Exception {
+        log.info("Finding restaurant {}", restaurantId);
+        Optional<Restaurant> restaurant = restaurantRepository.findById(restaurantId);
+        log.info("Restaurant {} found", restaurant);
+        return restaurant.get();
+    }
+
+    //    find with token info
+    @Override
+    @Transactional(readOnly = true)
+    public Restaurant findRestaurantById(Long restaurantId, User currentUser) throws UnauthorizedAccessException {
+        log.info("Finding restaurant {} for user {}", restaurantId, currentUser.getId());
+
+        // Input validation
+        if (restaurantId == null || restaurantId <= 0) {
+            throw new IllegalArgumentException("Invalid restaurant ID");
+        }
+
+        //  Find a restaurant or throw exception
+        Restaurant restaurant = restaurantRepository.findById(restaurantId)
+                .orElseThrow(() -> new RestaurantNotFoundException("Restaurant Not Found"));
+
+        // Authorization check
+        if (restaurant.getOwner().getId() != currentUser.getId()) {
+            throw new UnauthorizedAccessException("You are not authorized to access this restaurant");
+        }
+        log.info("Restaurant {} found for user {}", restaurantId, currentUser.getId());
         return restaurant;
     }
 }

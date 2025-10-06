@@ -23,11 +23,11 @@ public interface IResturantService {
 	public Restaurant createRestaurant(CreateRestaurantRequest req,User user);
 
 	//For Restaurant owner 
-	public Restaurant updateRestaurant(@NotNull Long Restaurantid ,@Valid CreateRestaurantRequest updatedRestaurant) throws Exception;
+	public Restaurant updateRestaurant(@NotNull Long restaurantId ,@Valid CreateRestaurantRequest updatedRestaurant) throws Exception;
 	
 	
     //Delete Restaurant
-	public Boolean deleteRestaurant(User byUsername, Long Restaurantid) throws EntityNotFoundException;
+	public Boolean deleteRestaurant(User byUsername, Long restaurantId) throws EntityNotFoundException;
 
 	//Search Restaurant
 	public List<Restaurant> searchRestaurant(String searchedWord);
@@ -39,18 +39,21 @@ public interface IResturantService {
 	// find all open Restaurant
 	Collection<Restaurant> findOpenRestaurants();
 	
-	//find Restaurant By ID
-	public Restaurant findRestaurantById(Long Restaurantid) throws Exception ;
+	//find Restaurant By ID(dual params
+	public Restaurant findRestaurantById(Long restaurantId) throws Exception ;
+
+	//find Restaurant By ID(single param )
+	public Restaurant findRestaurantById(Long restaurantId,User currentUser) throws Exception ;
 
 	public List<ResturantDto> getRestaurantByUserId(Long userId) throws EntityNotFoundException;
 	
 	
 	//Adding Restaurant to a favourite list
-	public ResturantDto addToFavourite(Long Restaurantid,User user) throws Exception;
+	public ResturantDto addToFavourite(Long restaurantId,User user) throws Exception;
 	
 	
 	//For Updating Restaurant Status
-	public Restaurant updateRestaurantStatus(Long id) throws Exception;
+	public Restaurant updateRestaurantStatus(Long restaurantId,User currentUser) throws Exception;
 	
 	
 	

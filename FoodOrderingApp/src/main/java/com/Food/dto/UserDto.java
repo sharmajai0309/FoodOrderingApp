@@ -15,15 +15,22 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class UserDto {
 	private String username;	
 	private String email;
+
+
 	private List<Order> orders = new ArrayList<>();
+
 	private List<ResturantDto>favorite = new ArrayList<>();
+
 	private List<Address> addresses = new ArrayList<>();
 }

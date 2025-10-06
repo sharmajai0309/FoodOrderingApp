@@ -18,6 +18,10 @@ import com.Food.dto.UserDto;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Slf4j
 @RestController
 @RequestMapping("/v1/user")
@@ -28,25 +32,46 @@ public class UserController {
     
     @Autowired
     private ModelMapper modelMapper;
- 
-
-
 
 @GetMapping("/profile")
 @PreAuthorize("hasRole('CUSTOMER')")
-public ResponseEntity<UserDto> finduserbytoken(){
+public ResponseEntity<UserDto> finduserbytoken() {
     // This gets the authentication object from the security context
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    
+
     // authentication.getName() returns the userName from the token
     String username = authentication.getName();
     log.info("name fetched form token" + username);
-    User user = userService.findByUsername(username);	
+    User user = userService.findByUsername(username);
     UserDto userDto = new UserDto();
     modelMapper.map(user, userDto);
 
     log.info("User fetched form token" + username);
     return ResponseEntity.ok(userDto);
 }
-    
+
+
+//    @GetMapping("/GetAll")
+//    @PreAuthorize("permitAll")
+//    public ResponseEntity<List<UserDto>> getAllUsers() {
+//        List<User> users = userService.findUsers();
+//
+//        List<UserDto> userDtos = users.stream()
+//                .map(user -> {
+//                    UserDto userDto = new UserDto();
+//                    userDto.setUsername(user.getUsername());
+//                    userDto.setEmail(user.getEmail());
+//                    return userDto;
+//                })
+//                .collect(Collectors.toList());
+//
+//
+//
+//
+//
+//        log.info("Data fetched and converted");
+//
+//        return ResponseEntity.ok(userDtos);
+//    }
+
 }

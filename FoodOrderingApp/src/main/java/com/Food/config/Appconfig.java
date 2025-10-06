@@ -28,6 +28,7 @@ public class Appconfig {
 	
 	@Autowired
     private UserDetailsService userDetailsService;
+
 	
 	
 	
@@ -64,7 +65,7 @@ public class Appconfig {
 			
 				CorsConfiguration cfg =  new CorsConfiguration();
 				cfg.setAllowedOrigins(Arrays.asList(
-						"*",
+
 						"http://localhost:3000"
 						));
 				
