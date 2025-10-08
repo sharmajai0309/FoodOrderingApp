@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 
 import com.Food.Model.Restaurant;
 import com.Food.Model.User;
-import com.Food.dto.ResturantDto;
+import com.Food.dto.RestaurantDto;
 import com.Food.request.CreateRestaurantRequest;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -35,7 +35,9 @@ public interface IResturantService {
 	
 	//find all Restaurant
 	Page<Restaurant> findAllRestaurants(Pageable pageable);
-	
+
+	public List<Restaurant> findAllRestaurants();
+
 	// find all open Restaurant
 	Collection<Restaurant> findOpenRestaurants();
 	
@@ -45,11 +47,11 @@ public interface IResturantService {
 	//find Restaurant By ID(single param )
 	public Restaurant findRestaurantById(Long restaurantId,User currentUser) throws Exception ;
 
-	public List<ResturantDto> getRestaurantByUserId(Long userId) throws EntityNotFoundException;
+	public List<RestaurantDto> getRestaurantByUserId(Long userId) throws EntityNotFoundException;
 	
 	
 	//Adding Restaurant to a favourite list
-	public ResturantDto addToFavourite(Long restaurantId,User user) throws Exception;
+	public RestaurantDto addToFavourite(Long restaurantId, User user) throws Exception;
 	
 	
 	//For Updating Restaurant Status

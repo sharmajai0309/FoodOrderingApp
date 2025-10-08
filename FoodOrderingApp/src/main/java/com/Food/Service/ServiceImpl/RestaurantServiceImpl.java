@@ -7,7 +7,7 @@ import com.Food.Repository.IRestaurantRepository;
 import com.Food.Repository.IUserRepository;
 import com.Food.Service.IResturantService;
 import com.Food.Service.IUserServices;
-import com.Food.dto.ResturantDto;
+import com.Food.dto.RestaurantDto;
 import com.Food.exceptions.CustomException.RestaurantNotFoundException;
 import com.Food.exceptions.CustomException.UnauthorizedAccessException;
 import com.Food.request.CreateRestaurantRequest;
@@ -15,7 +15,6 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.internal.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 
 @Slf4j
@@ -105,6 +103,12 @@ public class RestaurantServiceImpl implements IResturantService {
 
     @Override
     @Transactional(readOnly = true)
+    public List<Restaurant> findAllRestaurants() {
+        return restaurantRepository.findAll();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Collection<Restaurant> findOpenRestaurants() {
         List<Restaurant> restaurantList = restaurantRepository.findAll();
         return restaurantList.stream()
@@ -115,7 +119,7 @@ public class RestaurantServiceImpl implements IResturantService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ResturantDto> getRestaurantByUserId(Long userId) throws EntityNotFoundException {
+    public List<RestaurantDto> getRestaurantByUserId(Long userId) throws EntityNotFoundException {
         log.info("Fetching restaurants for user ID: {}", userId);
 
         // ✅ JPQL Query - Main results
@@ -127,13 +131,13 @@ public class RestaurantServiceImpl implements IResturantService {
 
         // ✅ Convert to DTO
         return byOwnerId.stream()
-                .map(restaurant -> mapper.map(restaurant, ResturantDto.class))
+                .map(restaurant -> mapper.map(restaurant, RestaurantDto.class))
                 .collect(Collectors.toList());
     }
 
     @Override
     @Transactional
-    public ResturantDto addToFavourite(Long restaurantId, User user) throws Exception {
+    public RestaurantDto addToFavourite(Long restaurantId, User user) throws Exception {
         Restaurant restaurant = findRestaurantById(restaurantId);
         // Checking using ID
         boolean alreadyFavorite = user.getFavorite().stream()
@@ -144,7 +148,7 @@ public class RestaurantServiceImpl implements IResturantService {
             user.getFavorite().add(restaurant);
         }
         userRepository.save(user);
-        return mapper.map(restaurant, ResturantDto.class);
+        return mapper.map(restaurant, RestaurantDto.class);
     }
 
 

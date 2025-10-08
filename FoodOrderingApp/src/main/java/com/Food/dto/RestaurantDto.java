@@ -9,19 +9,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 // This class is a Data Transfer Object (DTO) for Restaurant information.
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResturantDto {
+public class RestaurantDto {
 
 	   @NotNull
 	   private Long id;

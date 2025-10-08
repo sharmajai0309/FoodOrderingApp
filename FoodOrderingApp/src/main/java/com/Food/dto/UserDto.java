@@ -5,15 +5,7 @@ import java.util.List;
 
 import com.Food.Model.Address;
 import com.Food.Model.Order;
-import com.Food.Model.USER_ROLE;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,7 +22,7 @@ public class UserDto {
 
 	private List<Order> orders = new ArrayList<>();
 
-	private List<ResturantDto>favorite = new ArrayList<>();
+	private List<RestaurantDto>favorite = new ArrayList<>();
 
 	private List<Address> addresses = new ArrayList<>();
 }

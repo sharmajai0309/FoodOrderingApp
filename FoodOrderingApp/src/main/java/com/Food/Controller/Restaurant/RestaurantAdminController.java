@@ -7,20 +7,17 @@ import com.Food.Repository.IRestaurantRepository;
 import com.Food.Response.ApiResponse;
 import com.Food.Service.IResturantService;
 import com.Food.Service.IUserServices;
-import com.Food.dto.ResturantDto;
+import com.Food.dto.RestaurantDto;
 import com.Food.exceptions.CustomException.RestaurantNotFoundException;
 import com.Food.exceptions.CustomException.UnauthorizedAccessException;
 import com.Food.request.CreateRestaurantRequest;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.mapper.Mapper;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -93,13 +90,13 @@ public class RestaurantAdminController {
     //Experimental
     @GetMapping("/restaurant")
     @PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_ADMIN')")
-    public ResponseEntity<List<ResturantDto>> getAllRestaurantByUserId() {
+    public ResponseEntity<List<RestaurantDto>> getAllRestaurantByUserId() {
         try {
             Long currentUserId = getCurrentUser().getId();
             if (currentUserId == null) {
                 throw new RestaurantNotFoundException(" User RESTAURANTs not found");
             }
-            List<ResturantDto> restaurantsdto = IresturantService.getRestaurantByUserId(currentUserId);
+            List<RestaurantDto> restaurantsdto = IresturantService.getRestaurantByUserId(currentUserId);
             return ResponseEntity.ok(restaurantsdto);
         } catch (Exception e) {
             // ✅ Goes to -> GlobalExceptionHandler

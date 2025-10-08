@@ -39,9 +39,14 @@ public class Appconfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/admin/**").hasAnyRole("RESTAURANT_ADMIN", "ADMIN")
-                .requestMatchers("/api/**").authenticated()
-                .anyRequest().permitAll()
+					//public Routes
+					.requestMatchers("/api/customer/restaurants/search/**").permitAll()
+					//Admin Routes
+					.requestMatchers("/api/admin/**").hasAnyRole("RESTAURANT_ADMIN", "ADMIN")
+					//general routes
+					.requestMatchers("/api/**").authenticated()
+					//Other routes
+					.anyRequest().permitAll()
             )
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
             .csrf(csrf -> csrf.disable())
