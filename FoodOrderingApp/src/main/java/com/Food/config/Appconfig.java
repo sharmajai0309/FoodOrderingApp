@@ -40,7 +40,12 @@ public class Appconfig {
         http.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
 					//public Routes
-					.requestMatchers("/api/customer/restaurants/search/**").permitAll()
+					.requestMatchers("/v1/user/**").permitAll()
+					.requestMatchers("/api/customer/restaurants/search/**",
+							"/api/customer/restaurants/allRestaurants/**"
+					).permitAll()
+
+
 					//Admin Routes
 					.requestMatchers("/api/admin/**").hasAnyRole("RESTAURANT_ADMIN", "ADMIN")
 					//general routes

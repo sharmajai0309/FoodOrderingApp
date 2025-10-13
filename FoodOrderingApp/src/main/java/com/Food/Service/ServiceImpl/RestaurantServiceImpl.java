@@ -138,16 +138,17 @@ public class RestaurantServiceImpl implements IResturantService {
     @Override
     @Transactional
     public RestaurantDto addToFavourite(Long restaurantId, User user) throws Exception {
+        log.info("Adding restaurant {} to favorites for user");
         Restaurant restaurant = findRestaurantById(restaurantId);
         // Checking using ID
-        boolean alreadyFavorite = user.getFavorite().stream()
-                .anyMatch(fav -> fav.getId().equals(restaurantId));
-        if (alreadyFavorite) {
-            user.getFavorite().removeIf(fav -> fav.getId().equals(restaurantId));
-        } else {
+        boolean wasRemoved = user.getFavorite().removeIf(fav -> fav.getId().equals(restaurantId));
+        if (!wasRemoved) {
             user.getFavorite().add(restaurant);
+            log.info("Restaurant {} added to favorites for user {}", restaurantId, user.getId());
         }
         userRepository.save(user);
+        log.info("Restaurant favorites saved in database");
+
         return mapper.map(restaurant, RestaurantDto.class);
     }
 

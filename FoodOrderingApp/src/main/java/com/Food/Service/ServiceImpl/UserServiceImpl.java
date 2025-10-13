@@ -57,8 +57,8 @@ public class UserServiceImpl implements IUserServices,UserDetailsService{
     @Override
     @Transactional(readOnly = true)
     public List<User> findUsers() {
-        List<User> all = repo.findAll();
-        return all;
+        return repo.findAllWithFavoritesAndImages();
+
     }
 
     @Override
