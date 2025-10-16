@@ -140,16 +140,35 @@ public class RestaurantServiceImpl implements IResturantService {
     public RestaurantDto addToFavourite(Long restaurantId, User user) throws Exception {
         log.info("Adding restaurant {} to favorites for user");
         Restaurant restaurant = findRestaurantById(restaurantId);
-        // Checking using ID
-        boolean wasRemoved = user.getFavorite().removeIf(fav -> fav.getId().equals(restaurantId));
-        if (!wasRemoved) {
-            user.getFavorite().add(restaurant);
-            log.info("Restaurant {} added to favorites for user {}", restaurantId, user.getId());
-        }
-        userRepository.save(user);
-        log.info("Restaurant favorites saved in database");
+        // Checking using ID //state check
+//        boolean wasRemoved = user.getFavorite().removeIf(fav -> fav.getId().equals(restaurantId));
+//        if (!wasRemoved) {
+//            user.getFavorite().add(restaurant);
+//            log.info("Restaurant {} added to favorites for user {}", restaurantId, user.getId());
+//        }
+//        userRepository.save(user);
+//        log.info("Restaurant favorites saved in database");
+//
+//        return mapper.map(restaurant, RestaurantDto.class);
+
+//        real time database chek
+//        Optional<User> currentuser = userRepository.findById(user.getId());
+//
+//        boolean wasRemoved = currentuser.get().getFavorite().removeIf(fav -> fav.getId().equals(restaurantId));
+//        if(!wasRemoved){
+//            currentuser.get().getFavorite().add(restaurant);
+//            log.info("Restaurant {} added to favorites", restaurantId);
+//        } else {
+//            log.info("Restaurant {} removed from favorites", restaurantId);
+//        }
+//        userRepository.save(currentuser.get());
+//        return mapper.map(restaurant,RestaurantDto.class);
+
+
+        userRepository.toggleFavorite(user.getId(), restaurantId);
 
         return mapper.map(restaurant, RestaurantDto.class);
+
     }
 
 

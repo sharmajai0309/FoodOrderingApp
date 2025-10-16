@@ -17,7 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.awt.print.Pageable;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -96,7 +96,6 @@ public class RestaurantCustomerController {
 
         User currentUser = getCurrentUser();
         log.info("Current user: {}", currentUser.getUsername());
-
         RestaurantDto restaurantDto = IresturantService.addToFavourite(restaurantId, currentUser);
 
         ApiResponse<RestaurantDto> response = ApiResponse.success(

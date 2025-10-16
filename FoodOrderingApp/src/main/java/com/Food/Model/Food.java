@@ -35,19 +35,18 @@ public class Food {
 	
 	@ManyToOne
 	private Category foodcategory;
-	
+
 	@Column(length =  1000)
 	@ElementCollection
 	private List<String> images;
-	
-	
-	
+
 	private Boolean isAvailable = true;
-	
+
 	@ManyToOne
 	private Restaurant restaurant;
 	
 	private Boolean isVegetarian;
+
 	private Boolean isSeasonal;
 	
 	

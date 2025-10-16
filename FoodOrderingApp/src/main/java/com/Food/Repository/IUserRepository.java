@@ -5,6 +5,8 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.query.Procedure;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.Food.Model.User;
@@ -23,5 +25,11 @@ public interface IUserRepository extends JpaRepository<User,Long> {
 			"LEFT JOIN FETCH u.favorite f " +
 			"LEFT JOIN FETCH f.images")
 	List<User> findAllWithFavoritesAndImages();
+
+
+	// Stored Procedures for toggle favorite restaurant
+	@Procedure(procedureName = "toggle_favorite")
+	void toggleFavorite(@Param("p_user_id") Long userId,
+						@Param("p_restaurant_id") Long restaurantId);
 
 }

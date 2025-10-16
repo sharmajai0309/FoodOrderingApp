@@ -67,7 +67,7 @@ public class UserController {
                     dto.setEmail(user.getEmail());
 
 
-                    // ✅ Favorites mapping
+                    // Favorites mapping
                     dto.setFavorite(user.getFavorite().stream()
                             .map(restaurant -> {
                                 RestaurantDto restaurantDto = new RestaurantDto();
@@ -80,7 +80,7 @@ public class UserController {
                             .collect(Collectors.toSet())
                     );
 
-                    // ✅ Empty arrays
+                    // Arrays
                     dto.setOrders(new ArrayList<>());
                     dto.setAddresses(new ArrayList<>());
 
