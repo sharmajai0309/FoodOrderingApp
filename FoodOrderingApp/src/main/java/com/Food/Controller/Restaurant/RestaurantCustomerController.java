@@ -76,9 +76,6 @@ public class RestaurantCustomerController {
         return ResponseEntity.ok(response);
     }
 
-
-
-
     @GetMapping("/{restaurantId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_ADMIN')")
     public ResponseEntity<ApiResponse>getRestaurantById(@PathVariable long restaurantId) throws Exception {

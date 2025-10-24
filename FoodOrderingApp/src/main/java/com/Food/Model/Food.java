@@ -21,6 +21,7 @@ import lombok.*;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Food {
 
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -48,8 +49,7 @@ public class Food {
 	private Boolean isVegetarian;
 
 	private Boolean isSeasonal;
-	
-	
+
 	@ManyToMany
 	private List<IngredientItem> ingredients = new ArrayList<>();
 	
