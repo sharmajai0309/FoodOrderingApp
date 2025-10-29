@@ -1,5 +1,6 @@
 package com.Food.Service.ServiceImpl;
 
+import com.Food.Model.Food;
 import com.Food.Model.Restaurant;
 import com.Food.Model.User;
 import com.Food.Repository.IAddressRepository;
@@ -21,6 +22,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -66,7 +68,7 @@ public class RestaurantServiceImpl implements IResturantService {
 
         User currentUser = userService.findByUsername(username);
         if (!Objects.equals(restaurant.getOwner().getId(), currentUser.getId())) {
-            throw new Exception("Only restaurant owner can update this restaurant");
+            throw new AccessDeniedException("Only restaurant owner can update this restaurant");
         }
         mapper.map(updatedRestaurant, restaurant);
         return restaurantRepository.save(restaurant);
@@ -191,6 +193,8 @@ public class RestaurantServiceImpl implements IResturantService {
         // Automatic save by @Transactional
         return restaurant;
     }
+
+
 
     //    find id without token info
     @Override

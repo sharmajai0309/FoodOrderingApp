@@ -52,7 +52,8 @@ public class Food {
 
 	@ManyToMany
 	private List<IngredientItem> ingredients = new ArrayList<>();
-	
+
+
 	private LocalDateTime createdDate;
 	
 	

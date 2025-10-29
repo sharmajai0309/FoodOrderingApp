@@ -24,10 +24,13 @@ public interface IFoodRepository extends JpaRepository<Food, Long> {
   @Query("SELECT f FROM Food f JOIN FETCH f.restaurant r JOIN FETCH r.owner WHERE f.id = :foodId")
   Optional<Food> findByIdWithRestaurantAndOwner(@Param("foodId") Long foodId);
 
-//  // find veg food in restaurant By its restaurant id
-//  Page<Food> findByIsVegetarianTrueAndRestaurantId(Long restaurantId, Pageable pageable);
-//  // find Non-veg food in restaurant By its restaurant id
-//  Page<Food> findByIsVegetarianFalseAndRestaurantId(Long restaurantId, Pageable pageable);
+  // find veg food in restaurant By its restaurant id
+  Page<Food> findByRestaurantIdAndIsVegetarianTrue(Long restaurantId, Pageable pageable);
+
+
+
+  // find Non-veg food in restaurant By its restaurant id
+  Page<Food> findByRestaurantIdAndIsVegetarianFalse(Long restaurantId, Pageable pageable);
 
 
   @Query("SELECT f FROM Food f WHERE f.restaurant.id = :restaurantId " +
@@ -40,7 +43,12 @@ public interface IFoodRepository extends JpaRepository<Food, Long> {
                                 @Param("categoryName") String categoryName,
                                 Pageable pageable);
 
+  // find Veg food
+  Page<Food> findByIsVegetarianTrue(Pageable pageable);
 
+  // find Non-veg food
+  Page<Food> findByIsVegetarianFalse(Pageable pageable);
 
-
+//find Count of Veg page Data
+ public Long countByIsVegetarianTrue();
 }

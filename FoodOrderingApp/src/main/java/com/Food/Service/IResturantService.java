@@ -4,6 +4,7 @@ package com.Food.Service;
 import java.util.Collection;
 import java.util.List;
 
+import com.Food.Model.Food;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -56,7 +57,10 @@ public interface IResturantService {
 	
 	//For Updating Restaurant Status
 	public Restaurant updateRestaurantStatus(Long restaurantId,User currentUser) throws Exception;
-	
+
+
+
+
 	
 	
 	

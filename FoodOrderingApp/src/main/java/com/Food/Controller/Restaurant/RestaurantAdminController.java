@@ -75,13 +75,11 @@ public class RestaurantAdminController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_ADMIN')")
     public ResponseEntity<ApiResponse>deleteRestaurant(@PathVariable Long id){
-        try{
+
             User currentUser = getCurrentUser();
             IresturantService.deleteRestaurant(currentUser, id);
             return ResponseEntity.ok(ApiResponse.success("Restaurant Deleted Successfully"));
-        } catch (EntityNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+
 
 
     }

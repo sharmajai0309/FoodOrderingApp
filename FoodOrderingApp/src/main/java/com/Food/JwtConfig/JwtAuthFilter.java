@@ -3,6 +3,10 @@ package com.Food.JwtConfig;
 import java.io.IOException;
 import java.util.List;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.security.SignatureException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -65,7 +69,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             }
-        } catch (Exception e) {
+        } catch (ExpiredJwtException | SignatureException | MalformedJwtException | UsernameNotFoundException e) {
             logger.error("JWT authentication failed", e);
             handlerExceptionResolver.resolveException(request, response, null, e);            
             // Don't throw exception - let the request continue

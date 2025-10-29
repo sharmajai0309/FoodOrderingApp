@@ -7,6 +7,8 @@ import com.Food.request.CreateFoodRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 public interface IFoodService {
 
 
@@ -24,11 +26,11 @@ public interface IFoodService {
                                         int pagesize);
 
     //Only for RestaurantOwner
-    public Food FindById(Long FoodId);
+    public Food FindfoodById(Long FoodId);
 
 
     //For Customer
-    public Page<Food> SearchFood(String Keyword);
+    public List<Food> SearchFood(String Keyword);
 
     // For veg Foods(Customers)
     public Page<Food> getAllVegFoods(Pageable pageable);
@@ -40,6 +42,7 @@ public interface IFoodService {
 
     // for RestaurantOwner
     public Food updateFoodAvailablitySatus(Long FoodId);
+
 
     
 }

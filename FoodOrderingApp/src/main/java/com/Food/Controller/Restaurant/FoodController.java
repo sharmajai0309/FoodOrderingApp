@@ -9,6 +9,7 @@ import com.Food.request.CreateFoodRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -20,10 +21,6 @@ public class FoodController {
 
     private final IFoodService IFoodService;
     private final IUserServices IuserService;
-
-
-
-
     private User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return IuserService.findByUsername(authentication.getName());
@@ -37,6 +34,7 @@ public class FoodController {
 //    }
 
     @GetMapping("/restaurants/{restaurantId}/foods")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<Page<Food>>getRestaurantFoods(
             @PathVariable Long restaurantId,
             @RequestParam(required = false) Boolean isVeg,        // ✅ Boolean - optional
@@ -46,9 +44,12 @@ public class FoodController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
+
+
         Page<Food> restaurantFoods = IFoodService.getResturantFoods(restaurantId, isVeg, isNonVeg,
                 isSeasonal, foodCategory, page, size);
         return ResponseEntity.ok(restaurantFoods);
+
     }
 
 
