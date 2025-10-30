@@ -17,8 +17,8 @@ public interface IFoodRepository extends JpaRepository<Food, Long> {
 
   Page<Food> findByRestaurantId(Long restaurantId, Pageable pageable);
 
-  @Query("SELECT f FROM Food f WHERE LOWER(f.name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(f.foodCategory.name) LIKE LOWER(CONCAT('%', :keyword, '%'))")
-  List<Food>searchFood(@Param("keyword") String keyword);
+  @Query("SELECT f FROM Food f WHERE LOWER(f.name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(f.foodcategory.name) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+  List<Food> searchFood(@Param("keyword") String keyword);
 
 
   @Query("SELECT f FROM Food f JOIN FETCH f.restaurant r JOIN FETCH r.owner WHERE f.id = :foodId")
@@ -36,12 +36,13 @@ public interface IFoodRepository extends JpaRepository<Food, Long> {
   @Query("SELECT f FROM Food f WHERE f.restaurant.id = :restaurantId " +
           "AND (:isVeg IS NULL OR f.isVegetarian = :isVeg) " +
           "AND (:isSeasonal IS NULL OR f.isSeasonal = :isSeasonal) " +
-          "AND (:categoryName IS NULL OR f.foodCategory.name = :categoryName)")
+          "AND (:categoryName IS NULL OR f.foodcategory.name = :categoryName)")
   Page<Food> findFoodsByFilters(@Param("restaurantId") Long restaurantId,
                                 @Param("isVeg") Boolean isVeg,
                                 @Param("isSeasonal") Boolean isSeasonal,
                                 @Param("categoryName") String categoryName,
                                 Pageable pageable);
+
 
   // find Veg food
   Page<Food> findByIsVegetarianTrue(Pageable pageable);

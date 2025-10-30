@@ -1,9 +1,6 @@
 package com.Food.Service.ServiceImpl;
 
-import com.Food.Model.Category;
-import com.Food.Model.Food;
-import com.Food.Model.Restaurant;
-import com.Food.Model.User;
+import com.Food.Model.*;
 import com.Food.Repository.IFoodRepository;
 import com.Food.Service.IFoodService;
 import com.Food.Service.IUserServices;
@@ -51,11 +48,9 @@ public class IFoodServiceImpl implements IFoodService {
 
     @Override
     @Transactional
-    @PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_ADMIN')")
     @CachePut(cacheNames = CacheConstants.FOODS_CACHE,key ="#result.id" )
-    public Food createFood(CreateFoodRequest req, Category category, Restaurant restaurant) {
+    public Food createFood(CreateFoodRequest req, Restaurant restaurant) {
         User currentUser = getCurrentUser();
-
         long restaurantOwnerId = restaurant.getOwner().getId();
         long currentUserid = currentUser.getId();
         if (!Objects.equals(restaurantOwnerId, currentUserid)) {
@@ -63,9 +58,14 @@ public class IFoodServiceImpl implements IFoodService {
                     "Restaurant ID: " + restaurant.getId() + " is owned by user ID: " + restaurant.getOwner().getId()
             );
         } else {
+//            List<IngredientItem> ingredientsToSave = new ArrayList<>();
+//            for (IngredientItem ingredient : req.getIngredients()) {
+//                // Agar ingredient mein ID nahi hai (new hai), toh cascade automatically save karega
+//                ingredientsToSave.add(ingredient);
+//            }
             Food food = Food.builder()
                     .name(req.getName())
-                    .foodcategory(category)
+                    .foodcategory(req.getCategory())
                     .restaurant(restaurant)
                     .description(req.getDescription())
                     .images(req.getImages())
@@ -126,6 +126,8 @@ public class IFoodServiceImpl implements IFoodService {
         log.info(foodsByFilters.toString());
         return foodsByFilters;
     }
+
+
 
 
     //Find Food By FoodId
