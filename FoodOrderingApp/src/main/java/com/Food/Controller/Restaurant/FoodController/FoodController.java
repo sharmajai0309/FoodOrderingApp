@@ -35,15 +35,12 @@ public class FoodController {
     @PreAuthorize("permitAll()")
     public ResponseEntity<Page<Food>>getRestaurantFoods(
             @PathVariable Long restaurantId,
-            @RequestParam(required = false) Boolean isVeg,        // ✅ Boolean - optional
-            @RequestParam(required = false) Boolean isNonVeg,     // ✅ Boolean - optional
-            @RequestParam(required = false) Boolean isSeasonal,   // ✅ Boolean - optional
+            @RequestParam(required = false) Boolean isVeg,
+            @RequestParam(required = false) Boolean isNonVeg,
+            @RequestParam(required = false) Boolean isSeasonal,
             @RequestParam(required = false) String foodCategory,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-
-
-
         Page<Food> restaurantFoods = IFoodService.getResturantFoods(restaurantId, isVeg, isNonVeg,
                 isSeasonal, foodCategory, page, size);
         return ResponseEntity.ok(restaurantFoods);

@@ -12,6 +12,9 @@ import com.Food.request.CreateFoodRequest;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -34,6 +37,7 @@ public class RestaurantFoodController {
         return IuserService.findByUsername(authentication.getName());
     }
 
+    // Only RestaurantAdmin and Admin Can Create food
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_ADMIN')")
     public ResponseEntity<ApiResponse> createFood(@RequestBody CreateFoodRequest request) throws Exception {
@@ -47,6 +51,81 @@ public class RestaurantFoodController {
                 .timestamp(String.valueOf(food.getCreatedDate()))
                 .build());
     }
+
+    //Method for bulk food Entries
+
+    @PostMapping("/bulk")
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    public ResponseEntity<ApiResponse> createBulkFood(@RequestBody List<CreateFoodRequest> requests) throws Exception {
+        IfoodService.createBulkFoods(requests);
+
+        return ResponseEntity.ok(ApiResponse.success("Bulk Food Saved"));
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // Only RestaurantAdmin and Admin Can Delete food
+    @DeleteMapping("/{foodId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_ADMIN')")
+    ResponseEntity<ApiResponse>DeleteFood(@PathVariable Long foodId) throws Exception {
+        IfoodService.DeleteFood(foodId);
+        return ResponseEntity.ok(ApiResponse.success(foodId,"Food Deleted with Id :{foodId} "));
+    }
+
+    @GetMapping("/{foodId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_ADMIN')")
+    ResponseEntity<ApiResponse> FindFoodById(@PathVariable Long foodId){
+        Food food = IfoodService.findfoodById(foodId);
+        return ResponseEntity.ok(ApiResponse.success(food,"Food Retrieved with id of : {foodId}"));
+    }
+
+    @GetMapping("/VegFood")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_ADMIN')")
+    ResponseEntity<ApiResponse> getAllVegFood(@RequestParam(defaultValue = "0") int page,
+                                              @RequestParam(defaultValue = "10") int size){
+        Pageable pageable = PageRequest.of(page,size, Sort.Direction.ASC);
+        Page<Food> allVegFoods = IfoodService.getAllVegFoods(pageable);
+        return ResponseEntity.ok(ApiResponse.success(allVegFoods,"All veg Food"));
+    }
+    @GetMapping("/NonVegFood")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_ADMIN')")
+    ResponseEntity<ApiResponse> getAllNonVegFood(@RequestParam(defaultValue = "0") int page,
+                                              @RequestParam(defaultValue = "10") int size){
+        Pageable pageable = PageRequest.of(page,size, Sort.Direction.ASC);
+        Page<Food> allVegFoods = IfoodService.getAllNonVegFoods(pageable);
+        return ResponseEntity.ok(ApiResponse.success(allVegFoods,"All Non-veg Food"));
+    }
+
+    @PutMapping("/{foodid}")
+     ResponseEntity<ApiResponse>updateFoodAvailablityStatus(@PathVariable Long foodid){
+        User currentUser = getCurrentUser();
+        Food food = IfoodService.updateFoodAvailablitySatus(currentUser, foodid);
+        return ResponseEntity.ok(ApiResponse.success(food.getIsAvailable(),"Food Id Status "));
+
+    }
+
+
+
+
 
 
 

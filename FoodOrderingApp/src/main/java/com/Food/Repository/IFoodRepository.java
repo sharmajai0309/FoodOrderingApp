@@ -52,4 +52,9 @@ public interface IFoodRepository extends JpaRepository<Food, Long> {
 
 //find Count of Veg page Data
  public Long countByIsVegetarianTrue();
+
+
+
+
+
 }

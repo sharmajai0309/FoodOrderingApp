@@ -3,6 +3,7 @@ package com.Food.Service.ServiceImpl;
 import com.Food.Model.*;
 import com.Food.Repository.IFoodRepository;
 import com.Food.Service.IFoodService;
+import com.Food.Service.IResturantService;
 import com.Food.Service.IUserServices;
 import com.Food.config.CacheConstants;
 import com.Food.request.CreateFoodRequest;
@@ -39,6 +40,7 @@ public class IFoodServiceImpl implements IFoodService {
 
     private final IFoodRepository foodRepository;
     private final IUserServices IuserService;
+    private final IResturantService IresturantService;
 
 
     private User getCurrentUser() {
@@ -48,21 +50,15 @@ public class IFoodServiceImpl implements IFoodService {
 
     @Override
     @Transactional
-    @CachePut(cacheNames = CacheConstants.FOODS_CACHE,key ="#result.id" )
+    @CachePut(cacheNames = CacheConstants.FOODS_CACHE, key = "#result.id")
     public Food createFood(CreateFoodRequest req, Restaurant restaurant) {
         User currentUser = getCurrentUser();
         long restaurantOwnerId = restaurant.getOwner().getId();
         long currentUserid = currentUser.getId();
-        if (!Objects.equals(restaurantOwnerId, currentUserid)) {
-            throw new AccessDeniedException("Access denied! You can only create food for your own restaurants. " +
-                    "Restaurant ID: " + restaurant.getId() + " is owned by user ID: " + restaurant.getOwner().getId()
-            );
-        } else {
-//            List<IngredientItem> ingredientsToSave = new ArrayList<>();
-//            for (IngredientItem ingredient : req.getIngredients()) {
-//                // Agar ingredient mein ID nahi hai (new hai), toh cascade automatically save karega
-//                ingredientsToSave.add(ingredient);
-//            }
+
+        // ✅ ADMIN ko allow karo - wo kisi bhi restaurant mein food create kar sakta hai
+        if (currentUser.getRole().equals(USER_ROLE.ADMIN)) {
+            // ADMIN ke liye direct allow - koi check nahi
             Food food = Food.builder()
                     .name(req.getName())
                     .foodcategory(req.getCategory())
@@ -76,12 +72,33 @@ public class IFoodServiceImpl implements IFoodService {
                     .createdDate(LocalDateTime.now())
                     .build();
             Food savedfood = foodRepository.save(food);
-            //adding food in In-Memory Object State
             restaurant.getFoods().add(savedfood);
             return savedfood;
         }
 
+        // RESTAURANT_ADMIN ownership check
+        if (!Objects.equals(restaurantOwnerId, currentUserid)) {
+            throw new AccessDeniedException("Access denied! You can only create food for your own restaurants. " +
+                    "Restaurant ID: " + restaurant.getId() + " is owned by user ID: " + restaurant.getOwner().getId()
+            );
+        }
 
+        // RESTAURANT_ADMIN apne restaurant ke liye food create karega
+        Food food = Food.builder()
+                .name(req.getName())
+                .foodcategory(req.getCategory())
+                .restaurant(restaurant)
+                .description(req.getDescription())
+                .images(req.getImages())
+                .price(req.getPrice())
+                .ingredients(req.getIngredients())
+                .isSeasonal(req.isSeasonal())
+                .isVegetarian(req.isVegetarian())
+                .createdDate(LocalDateTime.now())
+                .build();
+        Food savedfood = foodRepository.save(food);
+        restaurant.getFoods().add(savedfood);
+        return savedfood;
     }
 
 
@@ -107,7 +124,7 @@ public class IFoodServiceImpl implements IFoodService {
     }
 
 
-    //Get Restaurant Food By restaurant Id
+    //Get Restaurant Food By restaurant id
     @Override
     @Transactional(readOnly = true)
     @PreAuthorize("isAuthenticated()")
@@ -133,9 +150,8 @@ public class IFoodServiceImpl implements IFoodService {
     //Find Food By FoodId
     @Override
     @Transactional(readOnly = true)
-    @PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_ADMIN')")
     @Cacheable(cacheNames = CacheConstants.FOODS_CACHE, key = "#foodId")
-    public Food FindfoodById(Long foodId) {
+    public Food findfoodById(Long foodId) {
         Optional<Food> foodbyId = foodRepository.findById(foodId);
         if (foodbyId.isEmpty()) throw new EntityNotFoundException("Food Not found with This id {foodId}");
         return foodbyId.get();
@@ -191,9 +207,55 @@ public class IFoodServiceImpl implements IFoodService {
     @Override
     @Transactional
     @CacheEvict(value = CacheConstants.FOODS_CACHE, key = "#foodId")
-    public Food updateFoodAvailablitySatus(Long foodId) {
-        Food food = foodRepository.findById(foodId).orElseThrow(() -> new RuntimeException("No Food Found with This id : {foodId}"));
-        food.setIsAvailable(!food.getIsAvailable());
-        return foodRepository.save(food);
+    public Food updateFoodAvailablitySatus(User currentUser,Long foodId) {
+        Food food = foodRepository.findByIdWithRestaurantAndOwner(foodId).orElseThrow(() -> new EntityNotFoundException(" Food Not found With this food {foodId}"));
+        if (currentUser.getRole().equals(USER_ROLE.ADMIN)) {
+            food.setIsAvailable(!food.getIsAvailable());
+            return foodRepository.save(food);
+        }
+        User resOwner = food.getRestaurant().getOwner();
+        long resOwnerId = resOwner.getId();
+        long currentUserId = currentUser.getId();
+
+        if (Objects.equals(resOwnerId, currentUserId)) {
+            food.setIsAvailable(!food.getIsAvailable());
+            return foodRepository.save(food);
+        }
+        throw new AccessDeniedException("Access denied! You can only update food for your own restaurants.");
+
     }
+
+    @Override
+    @Transactional
+    public void createBulkFoods(List<CreateFoodRequest> requests) throws Exception {
+        List<Food> bulkfood = new ArrayList<>();
+
+
+        for(CreateFoodRequest request : requests){
+            Long restaurantId = request.getRestaurantId();
+            Restaurant restaurant = IresturantService.findRestaurantById(restaurantId);
+
+
+            Food food = new Food();
+            food.setName(request.getName());
+            food.setFoodcategory(request.getCategory());
+            food.setRestaurant(restaurant);
+            food.setDescription(request.getDescription());
+            food.setImages(request.getImages());
+            food.setPrice(request.getPrice());
+            food.setIngredients(request.getIngredients());
+            food.setIsSeasonal(request.isSeasonal());
+            food.setIsVegetarian(request.isVegetarian());
+            food.setCreatedDate(LocalDateTime.now());
+            food.setIsAvailable(true);
+
+            bulkfood.add(food);
+
+        }
+        //saving bulk info in  repository
+        foodRepository.saveAll(bulkfood);
+
+    }
+
+
 }

@@ -3,6 +3,7 @@ package com.Food.Service;
 import com.Food.Model.Category;
 import com.Food.Model.Food;
 import com.Food.Model.Restaurant;
+import com.Food.Model.User;
 import com.Food.request.CreateFoodRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,8 +27,7 @@ public interface IFoodService {
                                         int pagesize);
 
     //Only for RestaurantOwner
-    public Food FindfoodById(Long FoodId);
-
+    public Food findfoodById(Long FoodId);
 
     //For Customer
     public List<Food> SearchFood(String Keyword);
@@ -41,8 +41,9 @@ public interface IFoodService {
 
 
     // for RestaurantOwner
-    public Food updateFoodAvailablitySatus(Long FoodId);
+    public Food updateFoodAvailablitySatus(User currentUser, Long FoodId);
 
 
-    
+    //for bulk Services
+    void createBulkFoods(List<CreateFoodRequest> requests) throws Exception;
 }
