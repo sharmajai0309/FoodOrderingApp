@@ -1,4 +1,4 @@
-package com.Food.Controller.Restaurant;
+package com.Food.Controller.Restaurant.RestaurantController;
 
 
 import com.Food.Model.Restaurant;
@@ -11,7 +11,6 @@ import com.Food.dto.RestaurantDto;
 import com.Food.exceptions.CustomException.RestaurantNotFoundException;
 import com.Food.exceptions.CustomException.UnauthorizedAccessException;
 import com.Food.request.CreateRestaurantRequest;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

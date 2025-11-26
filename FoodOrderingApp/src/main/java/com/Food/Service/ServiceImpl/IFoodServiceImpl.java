@@ -1,11 +1,13 @@
 package com.Food.Service.ServiceImpl;
 
 import com.Food.Model.*;
-import com.Food.Repository.IFoodRepository;
+import com.Food.Repository.FoodRepository;
 import com.Food.Service.IFoodService;
 import com.Food.Service.IResturantService;
 import com.Food.Service.IUserServices;
 import com.Food.config.CacheConstants;
+import com.Food.projections.FoodProjection;
+import com.Food.projections.FoodSearchProjection;
 import com.Food.request.CreateFoodRequest;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +26,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.security.Key;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +39,7 @@ import static org.springframework.data.domain.Sort.Direction.ASC;
 @RequiredArgsConstructor
 public class IFoodServiceImpl implements IFoodService {
 
-    private final IFoodRepository foodRepository;
+    private final FoodRepository foodRepository;
     private final IUserServices IuserService;
     private final IResturantService IresturantService;
 
@@ -106,21 +107,34 @@ public class IFoodServiceImpl implements IFoodService {
     @Transactional
     @PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_ADMIN')")
     @CacheEvict(value = CacheConstants.FOODS_CACHE, key = "#foodId")
-    public void DeleteFood(Long foodId) throws Exception {
+    public void DeleteFood(Long foodId) throws EntityNotFoundException {
 
+        log.info("In Service Layer ---> ");
         long currentUserid = getCurrentUser().getId();
         Food food = foodRepository.findByIdWithRestaurantAndOwner(foodId)
-                .orElseThrow(Exception::new);
+                .orElseThrow(EntityNotFoundException::new);
+        log.info("True Owner Authorized started");
 
         Restaurant restaurant = food.getRestaurant();
         long resOwnerid = restaurant.getOwner().getId();
 
         if (!Objects.equals(resOwnerid, currentUserid)) {
+            log.info(" Owner Not  Authorized ");
+
             throw new AccessDeniedException("Access denied! You can only Delete food for your own restaurants. " +
                     "Restaurant ID: " + restaurant.getId() + " is owned by user ID: " + restaurant.getOwner().getId()
+
             );
+
         }
-        foodRepository.deleteById(foodId);
+        else{
+            log.info("True Authorized completed");
+            foodRepository.deleteById(foodId);
+            log.info("True Authorized delete completed");
+        }
+
+
+
     }
 
 
@@ -160,7 +174,7 @@ public class IFoodServiceImpl implements IFoodService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Food> SearchFood(String keyword) {
+    public List<FoodSearchProjection> searchFood(String keyword) {
         if (keyword == null || keyword.trim().isEmpty()) {
             return new ArrayList<>();
         }
@@ -189,18 +203,21 @@ public class IFoodServiceImpl implements IFoodService {
     }
 
 
+
+    //Only For Admin
     @Override
     @Transactional(readOnly = true)
-    public Page<Food> getAllVegFoods(Pageable pageable) {
-        return foodRepository.findByIsVegetarianTrue(pageable);
+    public Page<FoodProjection> getAllVegFoods(Pageable pageable) {
+        Page<FoodProjection> allVegFoodsProjected = foodRepository.findAllVegFoodsProjected(pageable);
+        return allVegFoodsProjected;
     }
 
 
-
+//only for admin
     @Override
     @Transactional(readOnly = true)
-    public Page<Food> getAllNonVegFoods(Pageable pageable) {
-        return foodRepository.findByIsVegetarianFalse(pageable);
+    public Page<FoodProjection> getAllNonVegFoods(Pageable pageable) {
+        return foodRepository.findAllNonVegFoodsProjected(pageable);
     }
 
 
@@ -235,7 +252,6 @@ public class IFoodServiceImpl implements IFoodService {
             Long restaurantId = request.getRestaurantId();
             Restaurant restaurant = IresturantService.findRestaurantById(restaurantId);
 
-
             Food food = new Food();
             food.setName(request.getName());
             food.setFoodcategory(request.getCategory());
@@ -252,9 +268,8 @@ public class IFoodServiceImpl implements IFoodService {
             bulkfood.add(food);
 
         }
-        //saving bulk info in  repository
+        //saving bulk info in repository
         foodRepository.saveAll(bulkfood);
-
     }
 
 

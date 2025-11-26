@@ -128,8 +128,8 @@ public class RestaurantServiceImpl implements IResturantService {
         List<Restaurant> byOwnerId = restaurantRepository.findByOwnerId(userId);
 
         // ✅ Native SQL Query - Performance check
-        List<Restaurant> byOwnerIdsql = restaurantRepository.findByOwnerIdsql(userId);
-        log.info("Native SQL results count: {}", byOwnerIdsql.size());
+//        List<Restaurant> byOwnerIdsql = restaurantRepository.findByOwnerIdsql(userId);
+//        log.info("Native SQL results count: {}", byOwnerIdsql.size());
 
         // ✅ Convert to DTO
         return byOwnerId.stream()

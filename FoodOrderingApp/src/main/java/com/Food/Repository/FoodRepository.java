@@ -1,6 +1,8 @@
 package com.Food.Repository;
 
 import com.Food.Model.Food;
+import com.Food.projections.FoodProjection;
+import com.Food.projections.FoodSearchProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,13 +14,19 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface IFoodRepository extends JpaRepository<Food, Long> {
+public interface FoodRepository extends JpaRepository<Food, Long> {
 
 
   Page<Food> findByRestaurantId(Long restaurantId, Pageable pageable);
 
-  @Query("SELECT f FROM Food f WHERE LOWER(f.name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(f.foodcategory.name) LIKE LOWER(CONCAT('%', :keyword, '%'))")
-  List<Food> searchFood(@Param("keyword") String keyword);
+  @Query("SELECT f.id as id, f.name as name, f.description as description, " +
+          "f.price as price, f.isVegetarian as vegetarian, f.isSeasonal as seasonal, " +
+          "f.foodcategory.name as categoryName, f.images as images " +
+          "FROM Food f " +
+          "WHERE LOWER(f.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+          "OR LOWER(f.description) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+          "OR LOWER(f.foodcategory.name) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+  List<FoodSearchProjection> searchFood(@Param("keyword") String keyword);
 
 
   @Query("SELECT f FROM Food f JOIN FETCH f.restaurant r JOIN FETCH r.owner WHERE f.id = :foodId")
@@ -44,14 +52,26 @@ public interface IFoodRepository extends JpaRepository<Food, Long> {
                                 Pageable pageable);
 
 
-  // find Veg food
-  Page<Food> findByIsVegetarianTrue(Pageable pageable);
+  @Query("SELECT f.name as name, f.description as description, f.price as price, " +
+          "f.foodcategory as foodcategory, f.images as images, " +
+          "f.isVegetarian as isVegetarian, f.isSeasonal as isSeasonal, " +
+          "f.ingredients as ingredients, " +
+          "f.restaurant.id as restaurantId, f.restaurant.owner as restaurantOwner " +
+          "FROM Food f WHERE f.isVegetarian = true")
+  Page<FoodProjection> findAllVegFoodsProjected(Pageable pageable);
 
   // find Non-veg food
-  Page<Food> findByIsVegetarianFalse(Pageable pageable);
+  @Query("SELECT f.name as name, f.description as description, f.price as price, " +
+          "f.foodcategory as foodcategory, f.images as images, " +
+          "f.isVegetarian as isVegetarian, f.isSeasonal as isSeasonal, " +
+          "f.ingredients as ingredients, " +
+          "f.restaurant.id as restaurantId, f.restaurant.owner as restaurantOwner " +
+          "FROM Food f WHERE f.isVegetarian = false")
+  Page<FoodProjection> findAllNonVegFoodsProjected(Pageable pageable);
 
 //find Count of Veg page Data
  public Long countByIsVegetarianTrue();
+
 
 
 

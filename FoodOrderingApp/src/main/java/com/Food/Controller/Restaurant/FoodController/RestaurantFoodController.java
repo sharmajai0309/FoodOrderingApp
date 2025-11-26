@@ -8,9 +8,13 @@ import com.Food.Response.ApiResponse;
 import com.Food.Service.IFoodService;
 import com.Food.Service.IResturantService;
 import com.Food.Service.IUserServices;
+import com.Food.projections.FoodProjection;
 import com.Food.request.CreateFoodRequest;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +30,7 @@ import java.util.List;
 @RestController
 @RequestMapping("v1/api/Restaurant/Food")
 @RequiredArgsConstructor
+@Slf4j
 public class RestaurantFoodController {
 
     private final IFoodService IfoodService;
@@ -63,6 +68,16 @@ public class RestaurantFoodController {
     }
 
 
+    @DeleteMapping("/delete/{foodId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_ADMIN')")
+    public ResponseEntity<ApiResponse> deletefood(@PathVariable long foodId) throws Exception {
+        log.info("In Controller Layer ---> ");
+          IfoodService.DeleteFood(foodId);
+          return ResponseEntity.ok(ApiResponse.success("Food With ID :"+ foodId+ "deleted"));
+    }
+
+
+
 
 
 
@@ -98,22 +113,22 @@ public class RestaurantFoodController {
         return ResponseEntity.ok(ApiResponse.success(food,"Food Retrieved with id of : {foodId}"));
     }
 
-    @GetMapping("/VegFood")
-    @PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_ADMIN')")
-    ResponseEntity<ApiResponse> getAllVegFood(@RequestParam(defaultValue = "0") int page,
-                                              @RequestParam(defaultValue = "10") int size){
-        Pageable pageable = PageRequest.of(page,size, Sort.Direction.ASC);
-        Page<Food> allVegFoods = IfoodService.getAllVegFoods(pageable);
-        return ResponseEntity.ok(ApiResponse.success(allVegFoods,"All veg Food"));
-    }
-    @GetMapping("/NonVegFood")
-    @PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_ADMIN')")
-    ResponseEntity<ApiResponse> getAllNonVegFood(@RequestParam(defaultValue = "0") int page,
-                                              @RequestParam(defaultValue = "10") int size){
-        Pageable pageable = PageRequest.of(page,size, Sort.Direction.ASC);
-        Page<Food> allVegFoods = IfoodService.getAllNonVegFoods(pageable);
-        return ResponseEntity.ok(ApiResponse.success(allVegFoods,"All Non-veg Food"));
-    }
+//    @GetMapping("/VegFood")
+//    @PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_ADMIN')")
+//    ResponseEntity<FoodProjection> getAllVegFood(@RequestParam(defaultValue = "0") int page,
+//                                                 @RequestParam(defaultValue = "10") int size){
+//        Pageable pageable = PageRequest.of(page,size, Sort.Direction.ASC);
+//        Page<Food> allVegFoods = IfoodService.getAllVegFoods(pageable);
+//        return ResponseEntity.ok(ApiResponse.success(allVegFoods,"All veg Food"));
+//    }
+//    @GetMapping("/NonVegFood")
+//    @PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_ADMIN')")
+//    ResponseEntity<ApiResponse> getAllNonVegFood(@RequestParam(defaultValue = "0") int page,
+//                                              @RequestParam(defaultValue = "10") int size){
+//        Pageable pageable = PageRequest.of(page,size, Sort.Direction.ASC);
+//        Page<Food> allVegFoods = IfoodService.getAllNonVegFoods(pageable);
+//        return ResponseEntity.ok(ApiResponse.success(allVegFoods,"All Non-veg Food"));
+//    }
 
     @PutMapping("/{foodid}")
      ResponseEntity<ApiResponse>updateFoodAvailablityStatus(@PathVariable Long foodid){

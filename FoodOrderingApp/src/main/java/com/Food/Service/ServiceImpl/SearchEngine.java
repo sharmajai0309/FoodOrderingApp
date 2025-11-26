@@ -67,7 +67,7 @@ public class SearchEngine {
         mistakes.put("spicey", "spicy");
         mistakes.put("spyci", "spicy");
         mistakes.put("noodels", "noodles");
-        mistakes.put("noodels", "noodles");
+        mistakes.put("nodle", "noodles");
         mistakes.put("cofee", "coffee");
         mistakes.put("coffe", "coffee");
         mistakes.put("choclate", "chocolate");

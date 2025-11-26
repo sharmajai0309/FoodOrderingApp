@@ -20,7 +20,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    // ✅ JWT Token Expired
+    //  JWT Token Expired
     @ExceptionHandler(ExpiredJwtException.class)
     public ResponseEntity<ApiError> handleExpiredJwtException(ExpiredJwtException ex) {
         ApiError apiError = new ApiError();
@@ -30,7 +30,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(apiError);
     }
 
-    // ✅ Invalid JWT Token
+    //  Invalid JWT Token
     @ExceptionHandler(SignatureException.class)
     public ResponseEntity<ApiError> handleSignatureException(SignatureException ex) {
         ApiError apiError = new ApiError();
@@ -40,7 +40,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(apiError);
     }
 
-    // ✅ Malformed JWT Token
+    //  Malformed JWT Token
     @ExceptionHandler(MalformedJwtException.class)
     public ResponseEntity<ApiError> handleMalformedJwtException(MalformedJwtException ex) {
         ApiError apiError = new ApiError();
@@ -50,7 +50,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(apiError);
     }
 
-    // ✅ User Not Found
+    // User Not Found
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<ApiError> handleUsernameNotFoundException(UsernameNotFoundException ex) {
         ApiError apiError = new ApiError();
@@ -60,7 +60,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiError);
     }
 
-    // ✅ 404 - Entity Not Found
+    //  404 - Entity Not Found
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ApiResponse> handleEntityNotFound(EntityNotFoundException ex) {
         log.warn("Entity not found: {}", ex.getMessage());
@@ -68,7 +68,7 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error(ex.getMessage()));
     }
 
-    // ✅ 404 - No Handler Found
+    //  404 - No Handler Found
     @ExceptionHandler(NoHandlerFoundException.class)
     public ResponseEntity<ApiResponse> handleNotFound(NoHandlerFoundException ex) {
         log.warn("API endpoint not found: {}", ex.getRequestURL());
@@ -76,7 +76,7 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error("API endpoint not found: " + ex.getRequestURL()));
     }
 
-    // ✅ 403 - Access Denied
+    //  403 - Access Denied
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ApiResponse> handleAccessDenied(AccessDeniedException ex) {
         log.warn("Access denied: {}", ex.getMessage());
@@ -84,7 +84,7 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error("Access denied: " + ex.getMessage()));
     }
 
-    // ✅ 401 - Authentication Failed
+    //  401 - Authentication Failed
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ApiResponse> handleAuthentication(AuthenticationException ex) {
         log.warn("Authentication failed: {}", ex.getMessage());
@@ -92,7 +92,7 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error("Authentication failed: " + ex.getMessage()));
     }
 
-    // ✅ 400 - Validation Errors
+    //  400 - Validation Errors
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ApiResponse> handleValidation(ConstraintViolationException ex) {
         log.warn("Validation error: {}", ex.getMessage());
@@ -100,7 +100,7 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error("Validation error: " + ex.getMessage()));
     }
 
-    // ✅ 400 - IllegalArgumentException
+    //  400 - IllegalArgumentException
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiResponse> handleIllegalArgument(IllegalArgumentException ex) {
         log.warn("Invalid argument: {}", ex.getMessage());
@@ -108,7 +108,7 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error("Invalid input: " + ex.getMessage()));
     }
 
-    // ✅ 400 - IllegalStateException
+    //  400 - IllegalStateException
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<ApiResponse> handleIllegalState(IllegalStateException ex) {
         log.warn("Illegal state: {}", ex.getMessage());
@@ -116,7 +116,7 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error("Invalid operation: " + ex.getMessage()));
     }
 
-    // ✅ 500 - Generic Exception (Sabse niche rahega)
+    //  500 - Generic Exception (Sabse niche rahega)
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse> handleAllExceptions(Exception ex) {
         log.error("Internal server error: ", ex); // Stack trace log karo
@@ -124,7 +124,7 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error("Internal server error: " + ex.getMessage()));
     }
 
-    // ✅ NullPointerException (Special handling)
+    //  NullPointerException (Special handling)
 //    @ExceptionHandler(NullPointerException.class)
 //    public ResponseEntity<ApiResponse> handleNullPointer(NullPointerException ex) {
 //        log.error("Null pointer exception: ", ex);

@@ -40,9 +40,10 @@ public class Appconfig {
         http.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
 					//public Routes
-					.requestMatchers("/v1/user/**").permitAll()
+					.requestMatchers("/v1/user/**","/api/admin/category/create").permitAll()
 					.requestMatchers("/api/customer/restaurants/search/**",
 							"/api/customer/restaurants/allRestaurants/**"
+
 					).permitAll()
 
 
@@ -61,7 +62,7 @@ public class Appconfig {
     }
     
     
-    
+
     
     //Global CorsConfiguration
     

@@ -6,11 +6,12 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.data.web.config.EnableSpringDataWebSupport;
 
 @SpringBootApplication
-@Slf4j
 @EntityScan(basePackages = {"com.Food.Model"})
 @EnableCaching
+@EnableSpringDataWebSupport(pageSerializationMode = EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO)
 public class FoodOrderingAppApplication {
 
 	/**
@@ -19,10 +20,12 @@ public class FoodOrderingAppApplication {
 	 * @param args command line arguments
 	 */
 	public static void main(String[] args) {
-		log.info("Food Ordering Application is starting...");
+
 		SpringApplication.run(FoodOrderingAppApplication.class, args);
-		log.info("Food Ordering Application is Started Successfully.");
+
 	}
+
+
 	
 
 }

@@ -42,10 +42,10 @@ public interface IResturantService {
 	// find all open Restaurant
 	Collection<Restaurant> findOpenRestaurants();
 	
-	//find Restaurant By ID(dual params
+	//find Restaurant By ID
 	public Restaurant findRestaurantById(Long restaurantId) throws Exception ;
 
-	//find Restaurant By ID(single param )
+	//find Restaurant By ID
 	public Restaurant findRestaurantById(Long restaurantId,User currentUser) throws Exception ;
 
 	public List<RestaurantDto> getRestaurantByUserId(Long userId) throws EntityNotFoundException;

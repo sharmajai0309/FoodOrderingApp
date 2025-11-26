@@ -72,7 +72,7 @@ public class Jwtutil {
         return extractClaim(token, Claims::getExpiration);
     }
     
-    // DEBUG: Check what's happening with your token
+    // DEBUG: Token
     public void debugToken(String token) {
         System.out.println("=== TOKEN DEBUG ===");
         System.out.println("Raw token: " + token);

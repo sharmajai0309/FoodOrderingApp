@@ -4,6 +4,8 @@ import com.Food.Model.Category;
 import com.Food.Model.Food;
 import com.Food.Model.Restaurant;
 import com.Food.Model.User;
+import com.Food.projections.FoodProjection;
+import com.Food.projections.FoodSearchProjection;
 import com.Food.request.CreateFoodRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,14 +32,14 @@ public interface IFoodService {
     public Food findfoodById(Long FoodId);
 
     //For Customer
-    public List<Food> SearchFood(String Keyword);
+    public List<FoodSearchProjection> searchFood(String keyword);
 
     // For veg Foods(Customers)
-    public Page<Food> getAllVegFoods(Pageable pageable);
+    public Page<FoodProjection> getAllVegFoods(Pageable pageable);
 
 
     // for nonVeg Foods(Customers)
-    public Page<Food> getAllNonVegFoods(Pageable pageable);
+    public Page<FoodProjection> getAllNonVegFoods(Pageable pageable);
 
 
     // for RestaurantOwner

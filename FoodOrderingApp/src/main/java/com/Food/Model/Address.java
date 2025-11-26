@@ -19,7 +19,7 @@ public class Address {
 	private Long id;
 
 	@JsonIgnore
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	private User user;
 	private String street;
 	private String city;
