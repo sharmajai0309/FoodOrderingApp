@@ -20,6 +20,8 @@ public interface IngredientItemRepository extends JpaRepository<IngredientItem, 
     @EntityGraph(attributePaths = {"category"})
     List<IngredientItem> findByCategoryId(@Param("categoryId") Long categoryId);
 
+
+
     @Query("SELECT ii FROM IngredientItem ii " +
             "JOIN FETCH ii.category " +
             "JOIN FETCH ii.restaurant " +

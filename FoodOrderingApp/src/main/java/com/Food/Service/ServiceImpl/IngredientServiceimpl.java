@@ -1,6 +1,4 @@
 package com.Food.Service.ServiceImpl;
-
-
 import com.Food.Model.Category;
 import com.Food.Model.IngredientCategory;
 import com.Food.Model.IngredientItem;
@@ -11,9 +9,14 @@ import com.Food.Repository.IngredientItemRepository;
 import com.Food.Response.ApiResponse;
 import com.Food.Service.IResturantService;
 import com.Food.Service.IngredientService;
+import com.Food.config.CacheConstants;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.dao.DataAccessException;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -23,6 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static com.Food.config.CacheConstants.*;
 
 @Slf4j
 @Service
@@ -36,6 +41,7 @@ public class IngredientServiceimpl implements IngredientService {
 
     @Override
     @Transactional
+    @CacheEvict(value = INGREDIENT_CATEGORY_RESTAURANT_LIST, key = "#restaurantId")
     public IngredientCategory createIngredientCategory(String categoryName, Long restaurantId) throws Exception {
         Restaurant restaurantById = IresturantService.findRestaurantById(restaurantId);
         IngredientCategory ingredientCategory = new IngredientCategory();
@@ -44,33 +50,20 @@ public class IngredientServiceimpl implements IngredientService {
         return ingredientCategoryRepository.save(ingredientCategory);
     }
 
-    @Transactional(readOnly = true)
+
     @Override
-    public ApiResponse getIngredientCategoryById(Long categoryId) {
-        try {
-            log.debug("Getting ingredient items for category: {}", categoryId);
-            if(categoryId == null) return  ApiResponse.error("Category ID cannot be null");
-
-            List<IngredientItem> items = ingredientItemRepository.findByCategoryId(categoryId);
-
-            log.debug("Found {} items for category {}", items.size(), categoryId);
-
-            ApiResponse response = new ApiResponse();
-            response.setSuccess(true);
-            response.setMessage(items.isEmpty() ? "No items Found" : "Items retrieved successfully");
-            response.setData(items);
-            return response;
-
-        }
-
-        catch (DataAccessException e) {
-            log.error("Database error while fetching items for category: {}", categoryId, e);
-            return ApiResponse.error("Failed to retrieve items");
-        }
+    @Transactional(readOnly = true)
+    @Cacheable(value = INGREDIENT_CATEGORY_SINGLE,key = "#categoryId")
+    public IngredientCategory getIngredientCategoryById(Long categoryId) {
+       return ingredientCategoryRepository.findByCategoryId(categoryId)
+               .orElseThrow(() ->
+                       new EntityNotFoundException("Category not found: " + categoryId));
     }
 
+
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = INGREDIENT_CATEGORY_RESTAURANT_LIST,key = "#restaurantId")
     public List<String> getIngredientCategoriesByRestaurantId(Long restaurantId) {
         return  ingredientCategoryRepository.findCategoryNamesByRestaurantId(restaurantId);
     }
@@ -78,6 +71,7 @@ public class IngredientServiceimpl implements IngredientService {
     
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = INGREDIENT_ITEM_RESTAURANT_LIST,key = "#restaurantId")
     public List<IngredientItem> getIngredientItemsByRestaurantId(Long restaurantId) {
         return ingredientItemRepository.findIngredientCategoryByRestaurantId(restaurantId);
     }
@@ -85,6 +79,7 @@ public class IngredientServiceimpl implements IngredientService {
 
     @Override
     @Transactional
+    @CacheEvict(value = INGREDIENT_ITEM_RESTAURANT_LIST, key = "#restaurantId")
     public IngredientItem createIngredientItem(Long restaurantId, String ingredientName, Long categoryId) throws Exception {
         log.debug("Creating ingredient item: {} for restaurant: {}, category: {}",
                 ingredientName, restaurantId, categoryId);
@@ -110,6 +105,10 @@ public class IngredientServiceimpl implements IngredientService {
 
     @Override
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = INGREDIENT_ITEM_SINGLE, key = "#ingredientItemId"),
+            @CacheEvict(value = INGREDIENT_ITEM_RESTAURANT_LIST, allEntries = true)
+    })
     public IngredientItem updateIngredientItemStockStatus(Long ingredientItemId) {
         log.debug("Toggling stock status for ingredient item: {}", ingredientItemId);
 
@@ -123,5 +122,14 @@ public class IngredientServiceimpl implements IngredientService {
                 ingredientItemId, !newStatus, newStatus);
 
         return item;
+    }
+
+
+
+    @Override
+    @Transactional(readOnly = true)
+    @Cacheable(value = INGREDIENT_ITEM_SINGLE,key = "#ingredientItemId")
+    public IngredientItem getIngredientItemById(Long ingredientItemId) {
+         return ingredientItemRepository.findById(ingredientItemId).orElseThrow(() -> new EntityNotFoundException("IngredientItem Not Found"));
     }
 }

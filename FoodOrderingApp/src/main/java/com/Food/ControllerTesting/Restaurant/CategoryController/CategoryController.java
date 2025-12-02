@@ -1,4 +1,4 @@
-package com.Food.Controller.Restaurant.CategoryController;
+package com.Food.ControllerTesting.Restaurant.CategoryController;
 
 
 import com.Food.Model.Category;
@@ -35,7 +35,7 @@ public class CategoryController {
 
 
     @PostMapping("/create")
-    @PreAuthorize("permitAll()")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_ADMIN')")
     public ResponseEntity<ApiResponse> createCategory(
             @RequestBody  Category category
             ) throws Exception {

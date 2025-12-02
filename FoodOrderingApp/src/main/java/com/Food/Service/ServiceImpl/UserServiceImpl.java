@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.Food.Service.IUserServices;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -37,13 +38,8 @@ public class UserServiceImpl implements IUserServices,UserDetailsService{
     
     
     @Override
-    @Transactional(readOnly = true)
     public User findByUsername(String username) {
         log.info("Entering findByUsername with username: {}", username);
-
-
-
-        
         return repo.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
@@ -59,6 +55,13 @@ public class UserServiceImpl implements IUserServices,UserDetailsService{
     public List<User> findUsers() {
         return repo.findAllWithFavoritesAndImages();
 
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public User findById(Long id) {
+        return repo.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
     }
 
     @Override

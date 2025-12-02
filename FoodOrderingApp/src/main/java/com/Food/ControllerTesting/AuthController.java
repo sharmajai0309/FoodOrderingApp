@@ -1,4 +1,4 @@
-package com.Food.Controller;
+package com.Food.ControllerTesting;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,7 +20,7 @@ import com.Food.Repository.IUserRepository;
 import com.Food.Response.AuthResponse;
 import com.Food.Service.ServiceImpl.UserServiceImpl;
 import com.Food.request.LoginRequest;
-import com.Food.request.LoginResponse;
+import com.Food.Response.LoginResponse;
 
 import lombok.extern.slf4j.Slf4j;
 

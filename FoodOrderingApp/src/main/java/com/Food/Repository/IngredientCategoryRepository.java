@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface IngredientCategoryRepository extends JpaRepository<IngredientCategory, Long> {
@@ -19,6 +20,10 @@ public interface IngredientCategoryRepository extends JpaRepository<IngredientCa
      */
     @Query("SELECT ic.id, ic.name FROM IngredientCategory ic JOIN ic.restaurant r WHERE r.id = :restaurantId")
     List<String> findCategoryNamesByRestaurantId(@Param("restaurantId") Long restaurantId);
+
+
+    @Query("SELECT ic FROM IngredientCategory ic JOIN FETCH ic.restaurant WHERE ic.id = :categoryId")
+    Optional<IngredientCategory> findByCategoryId(@Param("categoryId") Long categoryId);
 
 
 }

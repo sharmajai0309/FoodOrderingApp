@@ -23,7 +23,7 @@ public interface IngredientService {
      * @param categoryId the ID of the category
      * @return the found IngredientCategory
      */
-    ApiResponse getIngredientCategoryById(Long categoryId);
+    IngredientCategory getIngredientCategoryById(Long categoryId) throws Exception;
 
     /**
      * Find all ingredient categories for a restaurant
@@ -60,6 +60,13 @@ public interface IngredientService {
     IngredientItem updateIngredientItemStockStatus(Long ingredientItemId);
 
 
+    /**
+     * Get ingredient item
+     *
+     * @param ingredientItemId the ID of the ingredient item
+     * @return IngredientItem
+     */
+    IngredientItem getIngredientItemById(Long IngredientItemId);
 
 
 }

@@ -27,18 +27,18 @@ class FoodOrderingAppApplicationTests {
 	IngredientItemRepository ingredientItemRepository;
 
 
-	@Test
-	void contextLoads() {
-		var response = ingredientService.getIngredientCategoryById(1L);
-		System.out.println("Success:" + response.isSuccess());
-		System.out.println("Success:" + response.getMessage());
-		System.out.println("Success:" + response.getData());
-		if(response.getData() != null){
-			List<IngredientItem>list = (List<IngredientItem>) response.getData();
-			System.out.println(list.size());
-			list.forEach( ele -> System.out.println("Item:"+ele.getName()+":"+ele.getId()));
-		}
-	}
+//	@Test
+//	void contextLoads() {
+//		var response = ingredientService.getIngredientCategoryById(1L);
+//		System.out.println("Success:" + response.isSuccess());
+//		System.out.println("Success:" + response.getMessage());
+//		System.out.println("Success:" + response.getData());
+//		if(response.getData() != null){
+//			List<IngredientItem>list = (List<IngredientItem>) response.getData();
+//			System.out.println(list.size());
+//			list.forEach( ele -> System.out.println("Item:"+ele.getName()+":"+ele.getId()));
+//		}
+//	}
 
 	@Test
 	void findByRestaurantId(){

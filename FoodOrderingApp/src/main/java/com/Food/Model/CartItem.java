@@ -4,12 +4,11 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 
-@Data
+@Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -30,9 +29,7 @@ public class CartItem {
 	private Food food;
 	
 	private int quantity;
-	
-	
-	
+
 	private long totalPrize;
 
 	@ElementCollection

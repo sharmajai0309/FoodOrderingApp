@@ -28,7 +28,8 @@ public class IngredientCategory {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JsonIgnore
-	private Restaurant restaurant;
+    @ToString.Exclude
+    private Restaurant restaurant;
 	
 	
 	@OneToMany(mappedBy = "category",cascade = CascadeType.ALL,orphanRemoval = true)
