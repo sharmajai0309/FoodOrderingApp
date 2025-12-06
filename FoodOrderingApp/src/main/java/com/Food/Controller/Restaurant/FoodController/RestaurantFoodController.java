@@ -1,4 +1,4 @@
-package com.Food.ControllerTesting.Restaurant.FoodController;
+package com.Food.Controller.Restaurant.FoodController;
 
 import com.Food.Model.Food;
 import com.Food.Model.Restaurant;

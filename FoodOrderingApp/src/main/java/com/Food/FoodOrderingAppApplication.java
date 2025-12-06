@@ -7,10 +7,12 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EntityScan(basePackages = {"com.Food.Model"})
 @EnableCaching
+@EnableScheduling
 @EnableSpringDataWebSupport(pageSerializationMode = EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO)
 public class FoodOrderingAppApplication {
 

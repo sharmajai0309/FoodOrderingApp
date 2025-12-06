@@ -42,9 +42,13 @@ public class Appconfig {
 					//public Routes
 					.requestMatchers("/v1/user/**","/api/admin/category/create").permitAll()
 					.requestMatchers("/api/customer/restaurants/search/**",
-							"/api/customer/restaurants/allRestaurants/**"
+							"/api/customer/restaurants/allRestaurants/**",
+                            "/api/admin/memory/**"
 
-					).permitAll()
+
+					)
+                    .permitAll()
+                    .requestMatchers("/api/Customer/Cart/**").authenticated()
 
 
 					//Admin Routes

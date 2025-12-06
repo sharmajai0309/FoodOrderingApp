@@ -1,4 +1,4 @@
-package com.Food.ControllerTesting;
+package com.Food.Controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;

@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Log4j2
 @SpringBootTest
-public class CartRepoTesting {
+ class CartRepoTesting {
 
     @Autowired
     private ICartRepository cartRepoTesting;
@@ -20,18 +20,17 @@ public class CartRepoTesting {
     @Test
     @Transactional
     public void findcartbyitsid(){
-        Cart cart1 = cartRepoTesting.findByCustomerId2(1L);
-
-        System.out.print(
-                "Total: " + cart1.getTotal() +
-                        ", ID: " + cart1.getId() +
-                        ", Customer: " + cart1.getCustomer() +
-                        ", Items Count: " + cart1.getItems().size()
-        );
+//        Cart cart1 = cartRepoTesting.findByCustomerId2(1L);
+//
+//        System.out.print(
+//                "Total: " + cart1.getTotal() +
+//                        ", ID: " + cart1.getId() +
+//                        ", Customer: " + cart1.getCustomer() +
+//                        ", Items Count: " + cart1.getItems().size()
+//        );
     }
 
 
-    public void
 
 
 

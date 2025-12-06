@@ -2,14 +2,16 @@ package com.Food.Service;
 
 import com.Food.Model.Cart;
 import com.Food.Model.CartItem;
-import com.Food.request.AddcartItemRequest;
+import com.Food.request.AddCartItemRequest;
+
 
 import java.util.List;
+
 
 public interface IcartService {
 
     // Cart item methods
-    public CartItem addItemToCart(AddcartItemRequest request) throws Exception;
+    public CartItem addItemToCart(AddCartItemRequest request) throws Exception;
 
     public CartItem updateCartItemQuantity(Long cartItemId, int quantity) throws Exception;
 

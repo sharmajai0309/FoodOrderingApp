@@ -8,6 +8,8 @@ import org.springframework.stereotype.Repository;
 
 import com.Food.Model.Cart;
 
+import java.util.Optional;
+
 @Repository
 public interface ICartRepository extends JpaRepository<Cart,Long> {
 
@@ -16,8 +18,13 @@ public interface ICartRepository extends JpaRepository<Cart,Long> {
 
 
     @Query("SELECT c FROM Cart c LEFT JOIN FETCH c.customer WHERE c.customer.id = :userId")
-    Cart findByCustomerId2(@Param("userId") Long userId);
+    public Optional<Cart> findByCustomerId2(@Param("userId") Long userId);
 
+    @Query("SELECT c FROM Cart c " +
+            "LEFT JOIN FETCH c.items ci " +
+            "LEFT JOIN FETCH ci.food f " +
+            "WHERE c.id = :cartId")
+    Optional<Cart> findCartWithItemsAndFood(@Param("cartId") Long cartId);
 
 
 }

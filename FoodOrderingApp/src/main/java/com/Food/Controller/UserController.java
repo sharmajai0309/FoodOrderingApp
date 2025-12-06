@@ -1,4 +1,4 @@
-package com.Food.ControllerTesting;
+package com.Food.Controller;
 
 import com.Food.dto.RestaurantDto;
 import org.modelmapper.ModelMapper;

@@ -1,4 +1,4 @@
-package com.Food.ControllerTesting.Restaurant.CategoryController;
+package com.Food.Controller.Restaurant.CategoryController;
 
 
 import com.Food.Model.IngredientCategory;
