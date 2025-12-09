@@ -1,12 +1,15 @@
 package com.Food.ServiceTesting;
 
+import com.Food.Model.Address;
 import com.Food.Model.Cart;
 import com.Food.Model.CartItem;
 import com.Food.Repository.CartItemRepository;
 import com.Food.Service.IcartService;
+import com.Food.Service.OrderService;
 import com.Food.Service.ServiceImpl.CartServiceImpl;
 import com.Food.request.AddCartItemRequest;
 
+import com.Food.request.CreateOrderRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +41,9 @@ public class cartServiceTest {
     @Autowired
     private CartItemRepository cartItemRepository;
 
+    @Autowired
+    private OrderService orderService;
+
     @BeforeEach
     void setup() {
 
@@ -46,7 +52,7 @@ public class cartServiceTest {
         // Parse token and extract username (which is user ID "1")
         // But simpler: Directly set authentication
         Authentication auth = new UsernamePasswordAuthenticationToken(
-                "2",
+                "Jai",
                 null,
                 Collections.emptyList()
         );
@@ -86,6 +92,23 @@ public class cartServiceTest {
         System.out.println("Total items added: " + foodIds.length);
         System.out.println("Total time: " + totalTime + " ms");
         System.out.println("Average time per item: " + (totalTime / (double) foodIds.length) + " ms");
+    }
+
+
+    @Test
+    void orderCreatingTest() throws Exception {
+        Address address = new Address();
+        address.setCity("Indore");
+        address.setCountry("India");
+        address.setStreet("56");
+        address.setZipCode("12345");
+
+
+        CreateOrderRequest createOrderRequest = new CreateOrderRequest();
+        createOrderRequest.setRestaurantId(1L);
+        createOrderRequest.setDeliveryAddress(address);
+
+        orderService.createOrder(createOrderRequest);
     }
 
     @Test

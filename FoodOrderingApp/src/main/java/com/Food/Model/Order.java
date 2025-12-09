@@ -38,10 +38,11 @@ public class Order {
     
     @OneToMany(mappedBy = "order",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<OrderItem> items;
-    
+
+
 //    private Payment payment;
     private int TotalItem;
-    private int TotalPrice;
+    private Long TotalPrice;
 	
 	
 	    
