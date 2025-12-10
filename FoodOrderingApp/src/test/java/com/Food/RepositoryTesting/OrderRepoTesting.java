@@ -27,11 +27,11 @@ class OrderRepoTesting {
 
     }
 
-    @Test
-    void findByRestaurantId(){
-        for (Order order : orderRepository.findByRestaurantId(1L)) {
-            System.out.println(order);
-        }
-
-    }
+//    @Test
+//    void findByRestaurantId(){
+//        for (Order order : orderRepository.findByRestaurantId(1L)) {
+//            System.out.println(order);
+//        }
+//
+//    }
 }

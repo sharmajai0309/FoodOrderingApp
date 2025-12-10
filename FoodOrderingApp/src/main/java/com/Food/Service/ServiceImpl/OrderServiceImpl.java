@@ -6,27 +6,26 @@ import com.Food.Repository.IUserRepository;
 import com.Food.Repository.OrderItemRepository;
 import com.Food.Repository.OrderRepository;
 import com.Food.Response.ResponseOrder;
+import com.Food.Response.UpdateResponseOrder;
 import com.Food.Service.IResturantService;
 import com.Food.Service.IUserServices;
 import com.Food.Service.IcartService;
 import com.Food.Service.OrderService;
 import com.Food.request.CreateOrderRequest;
+import jakarta.annotation.Nonnull;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import javax.swing.border.Border;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.Food.Metrics.MemoryMonitor.log;
 
 @Service
 @AllArgsConstructor
@@ -50,7 +49,7 @@ public class OrderServiceImpl implements OrderService {
 
 
     /**
-     * @param CreateOrderRequest
+     * @param order
      * @return responseOrder DTO
      */
     @Override
@@ -146,15 +145,15 @@ public class OrderServiceImpl implements OrderService {
      */
 
 
+
     @Override
     @Transactional
-    public ResponseOrder updateOrder(Long orderId, String orderStatus) throws Exception {
+    public UpdateResponseOrder updateOrder(Long orderId, String orderStatus) throws Exception {
         // Validate
         if (orderId == null) throw new IllegalArgumentException("Order ID required");
-        if (orderStatus == null || orderStatus.trim().isEmpty())
-            throw new IllegalArgumentException("Order status required");
 
-        // Find
+
+        // Find By OrderID
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new EntityNotFoundException("Order #" + orderId + " not found"));
 
@@ -170,12 +169,20 @@ public class OrderServiceImpl implements OrderService {
         // Log
         log.info("Order {} status changed: {} → {}", orderId, oldStatus, orderStatus);
 
+        String notes = switch (orderStatus.toUpperCase()) {
+            case "DELIVERED" -> "Order delivered successfully at " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("hh:mm a"));
+            case "OUT_FOR_DELIVERY" -> "Order is out for delivery. Expected in 30 minutes";
+            case "PREPARING" -> "Restaurant is preparing your order";
+            case "CANCELLED" -> "Order cancelled. Refund initiated";
+            default -> "Order status updated to " + orderStatus;
+        };
+        UpdateResponseOrder responseOrder = new UpdateResponseOrder();
+        responseOrder.setOrderId(updatedOrder.getId());
+        responseOrder.setOrderStatus(orderStatus);
+        responseOrder.setNotes(notes);
         // Return
-        return createResponseOrder(updatedOrder);
+        return responseOrder;
     }
-
-
-
 
 
     /**
@@ -183,27 +190,70 @@ public class OrderServiceImpl implements OrderService {
      */
 
     @Override
+    @Transactional
     public void deleteOrder(Long orderIs) {
 
+        if (orderIs == null) throw new IllegalArgumentException("Order ID required");
+        orderRepository.deleteById(orderIs);
+        log.info("Order {} has been deleted", orderIs);
     }
 
     /**
      * @param userId
      * @return
      */
+
+
     @Override
-    public List<Order> getUserAllOrders(Long userId) {
-        return List.of();
+    @Transactional(readOnly = true)
+    public List<ResponseOrder> getUserAllOrders(Long userId) {
+        List<ResponseOrder> results = new ArrayList<>();
+
+        for (Order order : orderRepository.findOrdersWithEverything(userId)) {
+            ResponseOrder responseOrder = new ResponseOrder();
+            responseOrder.setId(order.getId());
+            responseOrder.setOrderStatus(order.getOrderStatus());
+            responseOrder.setTotalAmount(order.getTotalAmount());
+            responseOrder.setCreatedAt(order.getCreatedAt());
+            responseOrder.setDeliveryAddress(order.getDeliveryAddress());
+            responseOrder.setRestaurantName(order.getRestaurant().getName());
+            responseOrder.setTotalPrice(order.getTotalPrice());
+            responseOrder.setCustomerName(order.getCustomer().getUsername());
+            responseOrder.setRestaurantImage(order.getRestaurant().getName());
+            responseOrder.setItems(order.getItems());
+            results.add(responseOrder);
+        }
+        return results;
     }
 
     /**
      * @param restaurantId
      * @return
      */
+
+
+
     @Override
-    public List<Order> getAllOrdersByRestaurantId(Long restaurantId) {
-        return List.of();
+    @Transactional(readOnly = true)
+    public List<ResponseOrder> getAllOrdersByRestaurantId(Long restaurantId) {
+        List<ResponseOrder>  results = new ArrayList<>();
+        for (Order order : orderRepository.findOrdersByRestaurantIdWithEverything(restaurantId)) {
+            ResponseOrder responseOrder = new ResponseOrder();
+            responseOrder.setId(order.getId());
+            responseOrder.setOrderStatus(order.getOrderStatus());
+            responseOrder.setTotalAmount(order.getTotalAmount());
+            responseOrder.setCreatedAt(order.getCreatedAt());
+            responseOrder.setDeliveryAddress(order.getDeliveryAddress());
+            responseOrder.setRestaurantName(order.getRestaurant().getName());
+            responseOrder.setTotalPrice(order.getTotalPrice());
+            responseOrder.setCustomerName(order.getCustomer().getUsername());
+            responseOrder.setRestaurantImage(order.getRestaurant().getName());
+            responseOrder.setItems(order.getItems());
+            results.add(responseOrder);
+        }
+        return results;
     }
+
 
 
 
@@ -220,7 +270,7 @@ public class OrderServiceImpl implements OrderService {
             responseOrder.setCreatedAt(order.getCreatedAt());
             responseOrder.setOrderStatus(order.getOrderStatus() != null ? order.getOrderStatus() : "UNKNOWN");
             responseOrder.setTotalAmount(order.getTotalAmount() != null ? order.getTotalAmount() : 0L);
-            responseOrder.setTotalItem(order.getTotalItem() != null ? order.getTotalItem() : 0);
+            responseOrder.setTotalItem(order.getTotalItem());
 
             // Delivery address - handle null
             if (order.getDeliveryAddress() != null) {
@@ -244,24 +294,24 @@ public class OrderServiceImpl implements OrderService {
             }
 
             // Restaurant info - safe null check with image handling
-            if (order.getRestaurant() != null) {
-                responseOrder.setRestaurantName(
-                        order.getRestaurant().getName() != null ?
-                                order.getRestaurant().getName() :
-                                "Unknown Restaurant"
-                );
-
-                // Handle restaurant images (could be String, List, or null)
-                Object images = order.getRestaurant().getImages();
-                if (images != null) {
-                    responseOrder.setRestaurantImage(images.toString());
-                } else {
-                    responseOrder.setRestaurantImage("No image available");
-                }
-            } else {
-                responseOrder.setRestaurantName("Restaurant not available");
-                responseOrder.setRestaurantImage("No image available");
-            }
+//            if (order.getRestaurant() != null) {
+//                responseOrder.setRestaurantName(
+//                        order.getRestaurant().getName() != null ?
+//                                order.getRestaurant().getName() :
+//                                "Unknown Restaurant"
+//                );
+//
+//                // Handle restaurant images (could be String, List, or null)
+//                Object images = order.getRestaurant().getImages();
+//                if (images != null) {
+//                    responseOrder.setRestaurantImage(images.toString());
+//                } else {
+//                    responseOrder.setRestaurantImage("No image available");
+//                }
+//            } else {
+//                responseOrder.setRestaurantName("Restaurant not available");
+//                responseOrder.setRestaurantImage("No image available");
+//            }
 
             // Order items - handle null or empty list
             if (order.getItems() != null && !order.getItems().isEmpty()) {

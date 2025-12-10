@@ -1,6 +1,8 @@
 package com.Food.ServiceTesting;
 
 import com.Food.Model.Address;
+import com.Food.Model.Order;
+import com.Food.Repository.OrderRepository;
 import com.Food.Response.ResponseOrder;
 import com.Food.Service.OrderService;
 import com.Food.request.CreateOrderRequest;
@@ -11,10 +13,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -24,6 +28,9 @@ public class OrderServiceTest {
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private OrderRepository orderRepository;
 
     @BeforeEach
     void setup() {
@@ -98,6 +105,55 @@ public class OrderServiceTest {
         System.out.println("⏱️  Average time per order: " + (totalTime / 5.0) + "ms");
         System.out.println("✅ All orders placed successfully!");
     }
+
+
+    @Test
+    void upadateorder() throws Exception {
+        orderService.updateOrder(2L,"PREPARING");
+    }
+    @Test
+    void deleteorder() throws Exception {
+        orderService.deleteOrder(252L);
+    }
+
+    @Test
+    void getUserAllOrders() {
+        for (ResponseOrder userAllOrder : orderService.getUserAllOrders(1L)) {
+            System.out.println(userAllOrder);
+
+        }
+
+    }
+
+
+
+    @Test
+    @Transactional
+    void findOrdersByRestaurantIdWithEverything(){
+//        for (Order order : orderRepository.findOrdersByRestaurantIdWithEverything(1L)) {
+//            System.out.println("Order ID: " + order.getId());
+//            System.out.println("Customer: " + order.getCustomer().getUsername());
+//            System.out.println("Status: " + order.getOrderStatus());
+//            System.out.println("Total Items: " + order.getTotalItem());
+//            System.out.println("Items in order: " + order.getItems().size());
+//            System.out.println("---");
+//        }
+
+        for (ResponseOrder order : orderService.getAllOrdersByRestaurantId(1L)) {
+            System.out.println("Order ID: " + order.getId());
+            System.out.println("Customer: " + order.getCustomerName());
+            System.out.println("Status: " + order.getOrderStatus());
+            System.out.println("Total Items: " + order.getTotalItem());
+            System.out.println("Items in order: " + order.getItems().size());
+            System.out.println("---");
+        }
+
+
+    }
+
+
+
+
 
 
 
