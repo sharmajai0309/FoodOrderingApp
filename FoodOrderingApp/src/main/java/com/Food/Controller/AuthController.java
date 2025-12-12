@@ -85,8 +85,7 @@ public class AuthController {
         cartrepo.save(cart);
         log.info("Cart created successfully for user: {}", savedUser.getUsername());
      
-        // FIXED: Generate token directly instead of incorrect authentication
-        // We don't need to authenticate here since we just created the user
+
         String generatedToken = jwtutil.createToken(savedUser.getUsername());
         log.info("JWT token generated for user: {}", savedUser.getUsername());
         

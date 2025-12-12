@@ -29,10 +29,6 @@ public class Appconfig {
 	@Autowired
     private UserDetailsService userDetailsService;
 
-	
-	
-	
-	
 	//Security Filter Chain for JWT Token Validation and Role Based Authorization
 
     @Bean
@@ -44,13 +40,17 @@ public class Appconfig {
 					.requestMatchers("/api/customer/restaurants/search/**",
 							"/api/customer/restaurants/allRestaurants/**",
                             "/api/admin/memory/**"
-
-
 					)
                     .permitAll()
                     .requestMatchers("/api/Customer/Cart/**").authenticated()
 
-
+					// Sagger ke liye allow karo
+					.requestMatchers( "/swagger-ui/**",
+							"/swagger-ui.html",
+							"/v3/api-docs/**",
+							"/api-docs/**",
+							"/webjars/**")
+					.permitAll()
 					//Admin Routes
 					.requestMatchers("/api/admin/**").hasAnyRole("RESTAURANT_ADMIN", "ADMIN")
 					//general routes
@@ -65,9 +65,8 @@ public class Appconfig {
         return http.build();
     }
     
-    
 
-    
+
     //Global CorsConfiguration
     
     @Bean

@@ -13,7 +13,6 @@ public interface OrderService {
 
     public ResponseOrder createOrder(CreateOrderRequest order) throws Exception;
 
-
     public UpdateResponseOrder updateOrder(Long orderId , String orderStatus) throws Exception;
 
     public void deleteOrder(Long orderIs);
@@ -22,6 +21,7 @@ public interface OrderService {
 
     public List<ResponseOrder> getAllOrdersByRestaurantId(Long restaurantId);
 
+    public ResponseOrder getOrderById(Long orderId);
 
 
 }

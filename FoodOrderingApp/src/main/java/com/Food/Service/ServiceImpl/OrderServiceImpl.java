@@ -254,7 +254,16 @@ public class OrderServiceImpl implements OrderService {
         return results;
     }
 
-
+    /**
+     * @param orderId 
+     * @return
+     */
+    @Override
+    public ResponseOrder getOrderById(Long orderId) {
+        Order order = orderRepository.findOrderByIdOnly(orderId).orElseThrow(() ->
+                new EntityNotFoundException("Order #" + orderId + " not found"));
+        return createResponseOrder(order);
+    }
 
 
     //helper method
