@@ -69,14 +69,14 @@ public class OrderServiceImpl implements OrderService {
                     .orElseThrow(() ->
                             new EntityNotFoundException("Address not found"));
 
-            // ✅ Set user for the address (if not set)
+            //  Set user for the address (if not set)
             if (savedAddress.getUser() == null) {
                 savedAddress.setUser(user);
                 iaddressRepository.save(savedAddress);
             }
         } else {
             // New address, save it
-            // ✅ Set user for the new address
+            // Set user for the new address
             shipAddress.setUser(user);
             savedAddress = iaddressRepository.save(shipAddress);
 
@@ -173,7 +173,10 @@ public class OrderServiceImpl implements OrderService {
             case "DELIVERED" -> "Order delivered successfully at " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("hh:mm a"));
             case "OUT_FOR_DELIVERY" -> "Order is out for delivery. Expected in 30 minutes";
             case "PREPARING" -> "Restaurant is preparing your order";
-            case "CANCELLED" -> "Order cancelled. Refund initiated";
+            case "CANCELLED", "PAYMENT_CANCELLED" -> "Order cancelled. Refund initiated";
+            case "PAID" -> "Payment Successful";
+            case "PAYMENT_PENDING" -> "Payment Pending";
+
             default -> "Order status updated to " + orderStatus;
         };
         UpdateResponseOrder responseOrder = new UpdateResponseOrder();
@@ -276,6 +279,7 @@ public class OrderServiceImpl implements OrderService {
             ResponseOrder responseOrder = new ResponseOrder();
 
             // Basic fields - these should not be null
+        responseOrder.setId(order.getId());
             responseOrder.setCreatedAt(order.getCreatedAt());
             responseOrder.setOrderStatus(order.getOrderStatus() != null ? order.getOrderStatus() : "UNKNOWN");
             responseOrder.setTotalAmount(order.getTotalAmount() != null ? order.getTotalAmount() : 0L);

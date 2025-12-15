@@ -12,8 +12,8 @@ public class UpdateResponseOrder {
     private Long orderId;
 
     @NotBlank(message = "Order status cannot be empty")
-    @Pattern(regexp = "PENDING|CONFIRMED|PREPARING|OUT_FOR_DELIVERY|DELIVERED|CANCELLED",
-            message = "Invalid order status. Allowed: PENDING, CONFIRMED, PREPARING, OUT_FOR_DELIVERY, DELIVERED, CANCELLED")
+    @Pattern(regexp = "PENDING|CONFIRMED|PREPARING|OUT_FOR_DELIVERY|PAYMENT_PENDING|PAID|DELIVERED|CANCELLED|PAYMENT_CANCELLED",
+            message = "Invalid order status. Allowed: PENDING, CONFIRMED, PREPARING, OUT_FOR_DELIVERY, DELIVERED, CANCELLED, PAID, PAYMENT_PENDING|PAYMENT_CANCELLED")
     private String orderStatus;
 
     private String notes;

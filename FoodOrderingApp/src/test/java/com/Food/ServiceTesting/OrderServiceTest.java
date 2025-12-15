@@ -57,7 +57,6 @@ public class OrderServiceTest {
         address.setZipCode("40023");
         address.setId(252L);
 
-
         CreateOrderRequest createOrderRequest = new CreateOrderRequest();
         createOrderRequest.setRestaurantId(1L);
         createOrderRequest.setDeliveryAddress(address);

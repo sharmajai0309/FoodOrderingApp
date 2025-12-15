@@ -31,4 +31,9 @@ public class ResponseOrder {
 
     // Order items
     private List<OrderItem> items;
+
+    // Payment Url
+    private String paymentUrl;
+
+
 }

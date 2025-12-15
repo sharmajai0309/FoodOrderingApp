@@ -2,10 +2,14 @@ package com.Food.Controller.Restaurant.OrderController;
 
 import com.Food.Model.User;
 import com.Food.Response.ApiResponse;
+import com.Food.Response.PaymentResponse;
 import com.Food.Response.ResponseOrder;
 import com.Food.Response.UpdateResponseOrder;
 import com.Food.Service.IUserServices;
 import com.Food.Service.OrderService;
+import com.Food.Service.PaymentService;
+import com.Food.dto.OrderDetailsDTO;
+import com.Food.dto.OrderPaymentDTO;
 import com.Food.request.CreateOrderRequest;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -16,7 +20,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @AllArgsConstructor
@@ -24,6 +30,7 @@ import java.util.List;
 public class OrderController {
     private final OrderService orderService;
     private final IUserServices userServices;
+    private final PaymentService paymentService;
 
     protected User getCurrentUserId(){
         return userServices.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
@@ -34,7 +41,26 @@ public class OrderController {
     public ResponseEntity<ApiResponse<ResponseOrder>> createOrder(
             @Valid @RequestBody CreateOrderRequest orderRequest) {
         try {
+
+
+            //Order Created
             ResponseOrder responseOrder = orderService.createOrder(orderRequest);
+            OrderPaymentDTO orderPaymentDTO = new OrderPaymentDTO();
+            orderPaymentDTO.setOrderId(responseOrder.getId());
+            orderPaymentDTO.setDescription("Food Order #" + responseOrder.getId());
+
+            orderPaymentDTO.setAmountInRupees(responseOrder.getTotalAmount());
+
+            //Payment Link Created
+            PaymentResponse paymentLink = paymentService.createPaymentLink(orderPaymentDTO);
+
+            //Inject Payment URL into responseOrder
+            responseOrder.setPaymentUrl(paymentLink.getUrl());
+
+
+
+
+
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(ApiResponse.success(responseOrder, "Order created successfully"));
         } catch (Exception e) {

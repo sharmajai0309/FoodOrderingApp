@@ -25,19 +25,19 @@ public class PaymentServiceImpl implements PaymentService {
      * @return
      */
     @Override
-    @Transactional
-    public PaymentResponse createPaymentLink(OrderPaymentDTO orderPaymentDTO) {
-        Long amountInPaisa = orderPaymentDTO.getAmountInRupees() * 100;
+    public PaymentResponse createPaymentLink(OrderPaymentDTO dto) {
+
+        Long amountInPaisa = dto.getAmountInRupees() * 100;
+
+        if (amountInPaisa <= 0) {
+            throw new IllegalArgumentException("Invalid payment amount");
+        }
 
         SessionCreateParams params =
                 SessionCreateParams.builder()
                         .setMode(SessionCreateParams.Mode.PAYMENT)
-                        .setSuccessUrl(
-                                "http://localhost:5454/payment/success?orderId=" + orderPaymentDTO.getOrderId()
-                        )
-                        .setCancelUrl(
-                                "http://localhost:5454/payment/cancel?orderId=" + orderPaymentDTO.getOrderId()
-                        )
+                        .setSuccessUrl("http://localhost:5454/payment/success?orderId=" + dto.getOrderId())
+                        .setCancelUrl("http://localhost:5454/payment/cancel?orderId=" + dto.getOrderId())
                         .addLineItem(
                                 SessionCreateParams.LineItem.builder()
                                         .setQuantity(1L)
@@ -47,7 +47,7 @@ public class PaymentServiceImpl implements PaymentService {
                                                         .setUnitAmount(amountInPaisa)
                                                         .setProductData(
                                                                 SessionCreateParams.LineItem.PriceData.ProductData.builder()
-                                                                        .setName(orderPaymentDTO.getDescription())
+                                                                        .setName("Food Order #" + dto.getOrderId())
                                                                         .build()
                                                         )
                                                         .build()
@@ -56,13 +56,12 @@ public class PaymentServiceImpl implements PaymentService {
                         )
                         .build();
 
-        Session session = null;
         try {
-            session = Session.create(params);
+            Session session = Session.create(params);
+            return new PaymentResponse(session.getUrl(), "PAYMENT_CREATED");
         } catch (StripeException e) {
-            throw new RuntimeException("Error while creating Stripe Session");
+            throw new RuntimeException(e.getMessage(), e);
         }
-
-        return new PaymentResponse(session.getUrl(), "PAYMENT_CREATED");
     }
+
 }
