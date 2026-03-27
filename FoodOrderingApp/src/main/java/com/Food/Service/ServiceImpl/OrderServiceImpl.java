@@ -3,7 +3,6 @@ package com.Food.Service.ServiceImpl;
 import com.Food.Model.*;
 import com.Food.Repository.IAddressRepository;
 import com.Food.Repository.IUserRepository;
-import com.Food.Repository.OrderItemRepository;
 import com.Food.Repository.OrderRepository;
 import com.Food.Response.ResponseOrder;
 import com.Food.Response.UpdateResponseOrder;
@@ -12,7 +11,6 @@ import com.Food.Service.IUserServices;
 import com.Food.Service.IcartService;
 import com.Food.Service.OrderService;
 import com.Food.request.CreateOrderRequest;
-import jakarta.annotation.Nonnull;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.AllArgsConstructor;
@@ -33,8 +31,7 @@ import java.util.List;
 public class OrderServiceImpl implements OrderService {
 
 
-   private  final OrderRepository orderRepository;
-   private final OrderItemRepository orderItemRepository;
+   private final OrderRepository orderRepository;
    private final IAddressRepository iaddressRepository;
    private final IUserRepository iuserRepository;
     private final IUserServices iuserServices;
@@ -222,7 +219,8 @@ public class OrderServiceImpl implements OrderService {
             responseOrder.setRestaurantName(order.getRestaurant().getName());
             responseOrder.setTotalPrice(order.getTotalPrice());
             responseOrder.setCustomerName(order.getCustomer().getUsername());
-            responseOrder.setRestaurantImage(order.getRestaurant().getName());
+            responseOrder.setRestaurantImage(order.getRestaurant().getImages() != null && !order.getRestaurant().getImages().isEmpty() 
+                ? order.getRestaurant().getImages().get(0) : "");
             responseOrder.setItems(order.getItems());
             results.add(responseOrder);
         }
@@ -250,7 +248,8 @@ public class OrderServiceImpl implements OrderService {
             responseOrder.setRestaurantName(order.getRestaurant().getName());
             responseOrder.setTotalPrice(order.getTotalPrice());
             responseOrder.setCustomerName(order.getCustomer().getUsername());
-            responseOrder.setRestaurantImage(order.getRestaurant().getName());
+            responseOrder.setRestaurantImage(order.getRestaurant().getImages() != null && !order.getRestaurant().getImages().isEmpty() 
+                ? order.getRestaurant().getImages().get(0) : "");
             responseOrder.setItems(order.getItems());
             results.add(responseOrder);
         }
@@ -307,24 +306,23 @@ public class OrderServiceImpl implements OrderService {
             }
 
             // Restaurant info - safe null check with image handling
-//            if (order.getRestaurant() != null) {
-//                responseOrder.setRestaurantName(
-//                        order.getRestaurant().getName() != null ?
-//                                order.getRestaurant().getName() :
-//                                "Unknown Restaurant"
-//                );
-//
-//                // Handle restaurant images (could be String, List, or null)
-//                Object images = order.getRestaurant().getImages();
-//                if (images != null) {
-//                    responseOrder.setRestaurantImage(images.toString());
-//                } else {
-//                    responseOrder.setRestaurantImage("No image available");
-//                }
-//            } else {
-//                responseOrder.setRestaurantName("Restaurant not available");
-//                responseOrder.setRestaurantImage("No image available");
-//            }
+            if (order.getRestaurant() != null) {
+                responseOrder.setRestaurantName(
+                        order.getRestaurant().getName() != null ?
+                                order.getRestaurant().getName() :
+                                "Unknown Restaurant"
+                );
+
+                List<String> images = order.getRestaurant().getImages();
+                if (images != null && !images.isEmpty()) {
+                    responseOrder.setRestaurantImage(images.get(0));
+                } else {
+                    responseOrder.setRestaurantImage("");
+                }
+            } else {
+                responseOrder.setRestaurantName("Restaurant not available");
+                responseOrder.setRestaurantImage("");
+            }
 
             // Order items - handle null or empty list
             if (order.getItems() != null && !order.getItems().isEmpty()) {

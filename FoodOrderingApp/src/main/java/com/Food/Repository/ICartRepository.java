@@ -13,12 +13,17 @@ import java.util.Optional;
 @Repository
 public interface ICartRepository extends JpaRepository<Cart,Long> {
 
-
     public Cart findByCustomerId(Long userId);
-
 
     @Query("SELECT c FROM Cart c LEFT JOIN FETCH c.customer WHERE c.customer.id = :userId")
     public Optional<Cart> findByCustomerId2(@Param("userId") Long userId);
+
+    // Fetches cart with all items and food in a single query — avoids lazy-load null issue
+    @Query("SELECT c FROM Cart c " +
+            "LEFT JOIN FETCH c.items ci " +
+            "LEFT JOIN FETCH ci.food " +
+            "WHERE c.customer.id = :userId")
+    Optional<Cart> findByCustomerIdWithItems(@Param("userId") Long userId);
 
     @Query("SELECT c FROM Cart c " +
             "LEFT JOIN FETCH c.items ci " +
@@ -26,5 +31,5 @@ public interface ICartRepository extends JpaRepository<Cart,Long> {
             "WHERE c.id = :cartId")
     Optional<Cart> findCartWithItemsAndFood(@Param("cartId") Long cartId);
 
-
 }
+

@@ -6,6 +6,7 @@ import com.Food.Service.IFoodService;
 import com.Food.Service.IResturantService;
 import com.Food.Service.IUserServices;
 import com.Food.config.CacheConstants;
+import com.Food.dto.FoodDto;
 import com.Food.projections.FoodProjection;
 import com.Food.projections.FoodSearchProjection;
 import com.Food.request.CreateFoodRequest;
@@ -27,10 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import static org.springframework.data.domain.Sort.Direction.ASC;
 
@@ -106,7 +104,7 @@ public class IFoodServiceImpl implements IFoodService {
     @Override
     @Transactional
     @PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_ADMIN')")
-    @CacheEvict(value = CacheConstants.FOODS_CACHE, key = "#foodId")
+    @CacheEvict(value = CacheConstants.FOODS_CACHE, key = "#a0")
     public void DeleteFood(Long foodId) throws EntityNotFoundException {
 
         log.info("In Service Layer ---> ");
@@ -164,7 +162,7 @@ public class IFoodServiceImpl implements IFoodService {
     //Find Food By FoodId
     @Override
     @Transactional(readOnly = true)
-    @Cacheable(cacheNames = CacheConstants.FOODS_CACHE, key = "#foodId")
+    @Cacheable(cacheNames = CacheConstants.FOODS_CACHE, key = "#a0")
     public Food findfoodById(Long foodId) {
         Optional<Food> foodbyId = foodRepository.findById(foodId);
         if (foodbyId.isEmpty()) throw new EntityNotFoundException("Food Not found with This id {foodId}");
@@ -174,33 +172,111 @@ public class IFoodServiceImpl implements IFoodService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<FoodSearchProjection> searchFood(String keyword) {
+    public List<FoodDto> searchFood(String keyword) {
+
         if (keyword == null || keyword.trim().isEmpty()) {
             return new ArrayList<>();
         }
 
+        // =========================
+        // 1️⃣ SEARCH KEYWORD CORRECTION
+        // =========================
         SearchEngine searchEngine = new SearchEngine();
-
-        // Split into individual words
         String[] words = keyword.trim().split("\\s+");
-        List<String> correctedWords = new ArrayList<>();
 
-        //  individually correct
+        List<String> correctedWords = new ArrayList<>();
         for (String word : words) {
-            String correctedWord = searchEngine.searchKeyword(word);
-            correctedWords.add(correctedWord);
+            correctedWords.add(searchEngine.searchKeyword(word));
         }
 
-        // Corrected words  join
         String finalSearchQuery = String.join(" ", correctedWords);
 
-        // Log for monitoring
         if (!keyword.equalsIgnoreCase(finalSearchQuery)) {
             log.info("Search corrected: '{}' -> '{}'", keyword, finalSearchQuery);
         }
 
-        return foodRepository.searchFood(finalSearchQuery);
+        // =========================
+        // 2️⃣ FETCH SEARCH PROJECTIONS
+        // =========================
+        List<FoodSearchProjection> projections =
+                foodRepository.searchFood(finalSearchQuery);
+
+        if (projections.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        // =========================
+        // 3️⃣ EXTRACT FOOD IDS
+        // =========================
+        List<Long> foodIds = projections.stream()
+                .map(FoodSearchProjection::getId)
+                .toList();
+
+        // =========================
+        // 4️⃣ FETCH IMAGES
+        // =========================
+        Map<Long, List<String>> imagesMap = new HashMap<>();
+
+        for (Object[] row : foodRepository.findImagesByFoodIds(foodIds)) {
+            Long foodId = (Long) row[0];
+            String image = (String) row[1];
+
+            imagesMap
+                    .computeIfAbsent(foodId, k -> new ArrayList<>())
+                    .add(image);
+        }
+
+        // =========================
+        // 5️⃣ FETCH INGREDIENTS (ENTITY)
+        // =========================
+        Map<Long, List<IngredientItem>> ingredientMap = new HashMap<>();
+
+        for (Object[] row : foodRepository.findIngredientsByFoodIds(foodIds)) {
+            Long foodId = (Long) row[0];
+            IngredientItem ingredient = (IngredientItem) row[1]; // ✅ FIXED
+
+            ingredientMap
+                    .computeIfAbsent(foodId, k -> new ArrayList<>())
+                    .add(ingredient);
+        }
+
+        // =========================
+        // 6️⃣ BUILD RESPONSE DTOs
+        // =========================
+        List<FoodDto> response = new ArrayList<>();
+
+        for (FoodSearchProjection food : projections) {
+
+            FoodDto dto = new FoodDto();
+
+            dto.setName(food.getName());
+            dto.setDescription(food.getDescription());
+            dto.setPrice(food.getPrice());
+            dto.setVegetarian(food.getVegetarian());
+            dto.setSeasonal(food.getSeasonal());
+
+            // Category (only name from projection)
+            Category category = new Category();
+            category.setName(food.getCategoryName());
+            dto.setCategory(category);
+
+            // Images
+            dto.setImages(
+                    imagesMap.getOrDefault(food.getId(), new ArrayList<>())
+            );
+
+            // Ingredients (ENTITY, no casting)
+            dto.setIngredients(
+                    ingredientMap.getOrDefault(food.getId(), new ArrayList<>())
+            );
+
+            response.add(dto);
+        }
+
+        return response;
     }
+
+
 
 
 
@@ -223,7 +299,7 @@ public class IFoodServiceImpl implements IFoodService {
 
     @Override
     @Transactional
-    @CacheEvict(value = CacheConstants.FOODS_CACHE, key = "#foodId")
+    @CacheEvict(value = CacheConstants.FOODS_CACHE, key = "#a1")
     public Food updateFoodAvailablitySatus(User currentUser,Long foodId) {
         Food food = foodRepository.findByIdWithRestaurantAndOwner(foodId).orElseThrow(() -> new EntityNotFoundException(" Food Not found With this food {foodId}"));
         if (currentUser.getRole().equals(USER_ROLE.ADMIN)) {

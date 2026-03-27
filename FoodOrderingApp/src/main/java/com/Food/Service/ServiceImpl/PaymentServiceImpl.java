@@ -1,12 +1,10 @@
 package com.Food.Service.ServiceImpl;
 
 import com.Food.Response.PaymentResponse;
-import com.Food.Response.ResponseOrder;
 import com.Food.Service.PaymentService;
 import com.Food.dto.OrderPaymentDTO;
 import com.stripe.Stripe;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.transaction.annotation.Transactional;
 import com.stripe.exception.StripeException;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
@@ -57,6 +55,7 @@ public class PaymentServiceImpl implements PaymentService {
                         .build();
 
         try {
+            Stripe.apiKey = secretKey;
             Session session = Session.create(params);
             return new PaymentResponse(session.getUrl(), "PAYMENT_CREATED");
         } catch (StripeException e) {

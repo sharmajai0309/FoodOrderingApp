@@ -40,10 +40,10 @@ public class FoodController {
 //    }
     private FoodDto foodresponse(Food food){
         return FoodDto.builder()
+                .id(food.getId())            // ← THE MISSING PIECE: frontend needs this for add-to-cart
                 .name(food.getName())
                 .description(food.getDescription())
                 .price(food.getPrice())
-                .description(food.getDescription())
                 .isVegetarian(food.getIsVegetarian())
                 .isSeasonal(food.getIsSeasonal())
                 .category(food.getFoodcategory())
@@ -81,16 +81,18 @@ public class FoodController {
 
     @GetMapping("/restaurants/{keyword}/search")
     @PreAuthorize("permitAll()")
-    public ResponseEntity<List<FoodDto>>searchFood(@PathVariable(required = true) String keyword){
+    public ResponseEntity<List<FoodDto>> searchFood(
+            @PathVariable String keyword) {
 
+        List<FoodDto> foodDtos = IFoodService.searchFood(keyword);
 
-        List<FoodSearchProjection> foods = IFoodService.searchFood(keyword);
-        List<FoodDto> foodDtos = foods.stream()
-                .map(food -> modelMapper.map(food, FoodDto.class))
-                .collect(Collectors.toList());
+        if (foodDtos.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
         return ResponseEntity.ok(foodDtos);
-
     }
+
 
 
 

@@ -16,5 +16,4 @@ public interface FoodSearchProjection {
     Boolean getVegetarian();
     Boolean getSeasonal();
     String getCategoryName();
-    List<String> getImages();
 }

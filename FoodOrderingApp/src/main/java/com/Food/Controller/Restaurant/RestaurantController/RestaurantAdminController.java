@@ -3,7 +3,6 @@ package com.Food.Controller.Restaurant.RestaurantController;
 
 import com.Food.Model.Restaurant;
 import com.Food.Model.User;
-import com.Food.Repository.IRestaurantRepository;
 import com.Food.Response.ApiResponse;
 import com.Food.Service.IResturantService;
 import com.Food.Service.IUserServices;
@@ -12,6 +11,7 @@ import com.Food.exceptions.CustomException.RestaurantNotFoundException;
 import com.Food.exceptions.CustomException.UnauthorizedAccessException;
 import com.Food.request.CreateRestaurantRequest;
 import lombok.extern.slf4j.Slf4j;
+import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,16 +27,12 @@ import java.util.List;
 public class RestaurantAdminController {
 
     private final IResturantService IresturantService;
-
     private final IUserServices IuserService;
-    private final IRestaurantRepository iRestaurantRepository;
 
     //Constructor Injection
-    public RestaurantAdminController(IResturantService IresturantService, IUserServices IuserService,
-                                     IRestaurantRepository iRestaurantRepository){
+    public RestaurantAdminController(IResturantService IresturantService, IUserServices IuserService){
         this.IresturantService = IresturantService;
         this.IuserService = IuserService;
-        this.iRestaurantRepository = iRestaurantRepository;
     }
 
       // Get All Restaurant
@@ -73,7 +69,7 @@ public class RestaurantAdminController {
     //    Delete RESTAURANT By Its Owner
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_ADMIN')")
-    public ResponseEntity<ApiResponse>deleteRestaurant(@PathVariable Long id){
+    public ResponseEntity<ApiResponse<Void>>deleteRestaurant(@PathVariable Long id){
 
             User currentUser = getCurrentUser();
             IresturantService.deleteRestaurant(currentUser, id);
@@ -89,21 +85,41 @@ public class RestaurantAdminController {
     @PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_ADMIN')")
     public ResponseEntity<List<RestaurantDto>> getAllRestaurantByUserId() {
         try {
-            Long currentUserId = getCurrentUser().getId();
-            if (currentUserId == null) {
-                throw new RestaurantNotFoundException(" User RESTAURANTs not found");
+            User currentUser = getCurrentUser();
+            Long currentUserId = currentUser.getId();
+
+            List<RestaurantDto> restaurantsdto;
+            
+            // ✅ If Super Admin, show ALL restaurants in the system
+            if (currentUser.getRole().equals(com.Food.Model.USER_ROLE.ADMIN)) {
+                log.info("Admin user {} fetching all restaurants", currentUserId);
+                List<Restaurant> allRestaurants = IresturantService.findAllRestaurants();
+                restaurantsdto = allRestaurants.stream()
+                        .map(r -> {
+                            RestaurantDto dto = new RestaurantDto();
+                            dto.setId(r.getId());
+                            dto.setTitle(r.getName()); // ✅ Correct field is 'title' in RestaurantDto
+                            dto.setDescription(r.getDescription());
+                            dto.setImages(r.getImages());
+                            return dto;
+                        })
+                        .collect(Collectors.toList());
+            } else {
+                // ✅ If Restaurant Admin, only show their OWN restaurants
+                log.info("Restaurant Admin {} fetching their own restaurants", currentUserId);
+                restaurantsdto = IresturantService.getRestaurantByUserId(currentUserId);
             }
-            List<RestaurantDto> restaurantsdto = IresturantService.getRestaurantByUserId(currentUserId);
+            
             return ResponseEntity.ok(restaurantsdto);
         } catch (Exception e) {
-            // ✅ Goes to -> GlobalExceptionHandler
+            log.error("Error fetching restaurants: {}", e.getMessage());
             throw e;
         }
     }
 
     @PutMapping("/{restaurantId}/status")
     @PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_ADMIN')")
-    ResponseEntity<ApiResponse> UpdateRestaurantStatus(@PathVariable Long restaurantId) throws Exception {
+    ResponseEntity<ApiResponse<Void>> UpdateRestaurantStatus(@PathVariable Long restaurantId) throws Exception {
 
         try {
             User currentUser = getCurrentUser();
@@ -135,7 +151,7 @@ public class RestaurantAdminController {
 //Find a Restaurant BY Its ID
     @GetMapping("/{restaurantId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_ADMIN')")
-    public ResponseEntity<ApiResponse>getRestaurantById(@PathVariable long restaurantId) throws Exception {
+    public ResponseEntity<ApiResponse<Restaurant>>getRestaurantById(@PathVariable long restaurantId) throws Exception {
         log.info("In Controller Level find By Restaurant");
         User currentUser = getCurrentUser();
         Restaurant restaurantById = IresturantService.findRestaurantById(restaurantId, currentUser);

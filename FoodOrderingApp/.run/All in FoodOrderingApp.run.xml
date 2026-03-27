@@ -1,0 +1,27 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="All in FoodOrderingApp" type="JUnit" factoryName="JUnit" activateToolWindowBeforeRun="false" nameIsGenerated="true" printAsyncStackTraceForExceptions="false">
+    <module name="FoodOrderingApp" />
+    <extension name="net.ashald.envfile">
+      <option name="IS_ENABLED" value="false" />
+      <option name="IS_SUBST" value="false" />
+      <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
+      <option name="IS_IGNORE_MISSING_FILES" value="false" />
+      <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
+      <ENTRIES>
+        <ENTRY IS_ENABLED="true" PARSER="runconfig" IS_EXECUTABLE="false" />
+      </ENTRIES>
+    </extension>
+    <option name="PACKAGE_NAME" value="" />
+    <option name="MAIN_CLASS_NAME" value="" />
+    <option name="METHOD_NAME" value="" />
+    <option name="TEST_OBJECT" value="directory" />
+    <option name="VM_PARAMETERS" />
+    <envs>
+      <env name="payment_Key" value="sk_test_51SeHobQdOqw18SPTYWfIqGK5ZGyYhq7l9dtyig12fDVtYzbUThNYiDGK8D0MKfYjebM3EgEMSW24KUNacZK6pLV7005k0HHNCY" />
+      <env name="Jwt_Key" value="your-256-bit-secret-your-256-bit-secret-your-256-bit-secret" />
+    </envs>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

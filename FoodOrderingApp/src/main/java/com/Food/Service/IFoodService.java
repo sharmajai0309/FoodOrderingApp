@@ -4,6 +4,7 @@ import com.Food.Model.Category;
 import com.Food.Model.Food;
 import com.Food.Model.Restaurant;
 import com.Food.Model.User;
+import com.Food.dto.FoodDto;
 import com.Food.projections.FoodProjection;
 import com.Food.projections.FoodSearchProjection;
 import com.Food.request.CreateFoodRequest;
@@ -32,7 +33,7 @@ public interface IFoodService {
     public Food findfoodById(Long FoodId);
 
     //For Customer
-    public List<FoodSearchProjection> searchFood(String keyword);
+    public List<FoodDto> searchFood(String keyword);
 
     // For veg Foods(Customers)
     public Page<FoodProjection> getAllVegFoods(Pageable pageable);

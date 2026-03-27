@@ -1,9 +1,7 @@
 package com.Food.Service.ServiceImpl;
 
-import com.Food.Model.Food;
 import com.Food.Model.Restaurant;
 import com.Food.Model.User;
-import com.Food.Repository.IAddressRepository;
 import com.Food.Repository.IRestaurantRepository;
 import com.Food.Repository.IUserRepository;
 import com.Food.Service.IResturantService;
@@ -35,7 +33,6 @@ public class RestaurantServiceImpl implements IResturantService {
 
     //Constructor Injection
     private final IUserServices userService;
-    private final IAddressRepository addressRepository;
     private final IRestaurantRepository restaurantRepository;
     private final ModelMapper mapper;
     private final IUserRepository userRepository;
@@ -220,8 +217,11 @@ public class RestaurantServiceImpl implements IResturantService {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new RestaurantNotFoundException("Restaurant Not Found"));
 
-        // Authorization check
-        if (restaurant.getOwner().getId() != currentUser.getId()) {
+        // Authorization check: User must be owner OR a Super Admin
+        boolean isOwner = restaurant.getOwner().getId() == currentUser.getId();
+        boolean isSuperAdmin = currentUser.getRole().equals(com.Food.Model.USER_ROLE.ADMIN);
+
+        if (!isOwner && !isSuperAdmin) {
             throw new UnauthorizedAccessException("You are not authorized to access this restaurant");
         }
         log.info("Restaurant {} found for user {}", restaurantId, currentUser.getId());

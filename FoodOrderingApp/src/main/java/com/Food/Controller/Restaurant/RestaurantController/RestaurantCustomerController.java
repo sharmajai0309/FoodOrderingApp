@@ -77,11 +77,10 @@ public class RestaurantCustomerController {
     }
 
     @GetMapping("/{restaurantId}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_ADMIN')")
-    public ResponseEntity<ApiResponse>getRestaurantById(@PathVariable long restaurantId) throws Exception {
-        log.info("In Controller Level find By Restaurant");
-        User currentUser = getCurrentUser();
-        Restaurant restaurantById = IresturantService.findRestaurantById(restaurantId, currentUser);
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<ApiResponse<Restaurant>> getRestaurantById(@PathVariable long restaurantId) throws Exception {
+        log.info("In Controller Level find By Restaurant ID: {}", restaurantId);
+        Restaurant restaurantById = IresturantService.findRestaurantById(restaurantId);
         return ResponseEntity.ok(ApiResponse.success(restaurantById, "Restaurant retrieved successfully"));
     }
 

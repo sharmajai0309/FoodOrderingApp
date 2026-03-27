@@ -41,7 +41,7 @@ public class IngredientServiceimpl implements IngredientService {
 
     @Override
     @Transactional
-    @CacheEvict(value = INGREDIENT_CATEGORY_RESTAURANT_LIST, key = "#restaurantId")
+    @CacheEvict(value = INGREDIENT_CATEGORY_RESTAURANT_LIST, key = "#a1")
     public IngredientCategory createIngredientCategory(String categoryName, Long restaurantId) throws Exception {
         Restaurant restaurantById = IresturantService.findRestaurantById(restaurantId);
         IngredientCategory ingredientCategory = new IngredientCategory();
@@ -53,7 +53,7 @@ public class IngredientServiceimpl implements IngredientService {
 
     @Override
     @Transactional(readOnly = true)
-    @Cacheable(value = INGREDIENT_CATEGORY_SINGLE,key = "#categoryId")
+    @Cacheable(value = INGREDIENT_CATEGORY_SINGLE, key = "#a0")
     public IngredientCategory getIngredientCategoryById(Long categoryId) {
        return ingredientCategoryRepository.findByCategoryId(categoryId)
                .orElseThrow(() ->
@@ -63,7 +63,7 @@ public class IngredientServiceimpl implements IngredientService {
 
     @Override
     @Transactional(readOnly = true)
-    @Cacheable(value = INGREDIENT_CATEGORY_RESTAURANT_LIST,key = "#restaurantId")
+    @Cacheable(value = INGREDIENT_CATEGORY_RESTAURANT_LIST, key = "#a0")
     public List<String> getIngredientCategoriesByRestaurantId(Long restaurantId) {
         return  ingredientCategoryRepository.findCategoryNamesByRestaurantId(restaurantId);
     }
@@ -71,7 +71,7 @@ public class IngredientServiceimpl implements IngredientService {
     
     @Override
     @Transactional(readOnly = true)
-    @Cacheable(value = INGREDIENT_ITEM_RESTAURANT_LIST,key = "#restaurantId")
+    @Cacheable(value = INGREDIENT_ITEM_RESTAURANT_LIST, key = "#a0")
     public List<IngredientItem> getIngredientItemsByRestaurantId(Long restaurantId) {
         return ingredientItemRepository.findIngredientCategoryByRestaurantId(restaurantId);
     }
@@ -79,7 +79,7 @@ public class IngredientServiceimpl implements IngredientService {
 
     @Override
     @Transactional
-    @CacheEvict(value = INGREDIENT_ITEM_RESTAURANT_LIST, key = "#restaurantId")
+    @CacheEvict(value = INGREDIENT_ITEM_RESTAURANT_LIST, key = "#a0")
     public IngredientItem createIngredientItem(Long restaurantId, String ingredientName, Long categoryId) throws Exception {
         log.debug("Creating ingredient item: {} for restaurant: {}, category: {}",
                 ingredientName, restaurantId, categoryId);
@@ -106,7 +106,7 @@ public class IngredientServiceimpl implements IngredientService {
     @Override
     @Transactional
     @Caching(evict = {
-            @CacheEvict(value = INGREDIENT_ITEM_SINGLE, key = "#ingredientItemId"),
+            @CacheEvict(value = INGREDIENT_ITEM_SINGLE, key = "#a0"),
             @CacheEvict(value = INGREDIENT_ITEM_RESTAURANT_LIST, allEntries = true)
     })
     public IngredientItem updateIngredientItemStockStatus(Long ingredientItemId) {
@@ -128,7 +128,7 @@ public class IngredientServiceimpl implements IngredientService {
 
     @Override
     @Transactional(readOnly = true)
-    @Cacheable(value = INGREDIENT_ITEM_SINGLE,key = "#ingredientItemId")
+    @Cacheable(value = INGREDIENT_ITEM_SINGLE, key = "#a0")
     public IngredientItem getIngredientItemById(Long ingredientItemId) {
          return ingredientItemRepository.findById(ingredientItemId).orElseThrow(() -> new EntityNotFoundException("IngredientItem Not Found"));
     }

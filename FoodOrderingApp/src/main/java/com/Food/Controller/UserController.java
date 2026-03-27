@@ -33,7 +33,7 @@ public class UserController {
     private ModelMapper modelMapper;
 
     @GetMapping("/profile")
-    @PreAuthorize("hasRole('CUSTOMER')")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN', 'RESTAURANT_ADMIN')")
     public ResponseEntity<UserDto> finduserbytoken() {
         // This gets the authentication object from the security context
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -58,7 +58,8 @@ public class UserController {
         List<UserDto> userDtos = users.stream()
                 .map(user -> {
                     UserDto dto = new UserDto();
-
+                    dto.setId(user.getId());
+                    dto.setRole(user.getRole());
                     dto.setUsername(user.getUsername());
                     dto.setEmail(user.getEmail());
 

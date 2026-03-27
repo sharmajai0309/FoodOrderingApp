@@ -19,14 +19,24 @@ public interface FoodRepository extends JpaRepository<Food, Long> {
 
   Page<Food> findByRestaurantId(Long restaurantId, Pageable pageable);
 
-  @Query("SELECT f.id as id, f.name as name, f.description as description, " +
-          "f.price as price, f.isVegetarian as vegetarian, f.isSeasonal as seasonal, " +
-          "f.foodcategory.name as categoryName, f.images as images " +
-          "FROM Food f " +
-          "WHERE LOWER(f.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-          "OR LOWER(f.description) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-          "OR LOWER(f.foodcategory.name) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+  @Query("""
+    SELECT DISTINCT
+        f.id as id,
+        f.name as name,
+        f.description as description,
+        f.price as price,
+        f.isVegetarian as vegetarian,
+        f.isSeasonal as seasonal,
+        c.name as categoryName
+    FROM Food f
+    LEFT JOIN f.foodcategory c
+    WHERE LOWER(f.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
+       OR LOWER(f.description) LIKE LOWER(CONCAT('%', :keyword, '%'))
+       OR LOWER(c.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
+""")
   List<FoodSearchProjection> searchFood(@Param("keyword") String keyword);
+
+
 
 
   @Query("SELECT f FROM Food f JOIN FETCH f.restaurant r JOIN FETCH r.owner WHERE f.id = :foodId")
@@ -72,6 +82,21 @@ public interface FoodRepository extends JpaRepository<Food, Long> {
 //find Count of Veg page Data
  public Long countByIsVegetarianTrue();
 
+  @Query("""
+    SELECT f.id, img
+    FROM Food f
+    JOIN f.images img
+    WHERE f.id IN :foodIds
+""")
+  List<Object[]> findImagesByFoodIds(@Param("foodIds") List<Long> foodIds);
+
+  @Query("""
+    SELECT f.id, ing
+    FROM Food f
+    JOIN f.ingredients ing
+    WHERE f.id IN :foodIds
+""")
+  List<Object[]> findIngredientsByFoodIds(@Param("foodIds") List<Long> foodIds);
 
 
 

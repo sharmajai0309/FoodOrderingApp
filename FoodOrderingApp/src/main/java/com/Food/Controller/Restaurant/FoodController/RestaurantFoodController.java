@@ -36,72 +36,35 @@ public class RestaurantFoodController {
     // Only RestaurantAdmin and Admin Can Create food
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_ADMIN')")
-    public ResponseEntity<ApiResponse> createFood(@RequestBody CreateFoodRequest request) throws Exception {
+    public ResponseEntity<ApiResponse<Food>> createFood(@RequestBody CreateFoodRequest request) throws Exception {
         Restaurant restaurant = IresturantService.findRestaurantById(request.getRestaurantId());
         Food food = IfoodService.createFood(request,restaurant);
 
-        return ResponseEntity.ok(ApiResponse.builder()
-                .success(true)
-                .message("Food '" + food.getName() + "' created successfully")
-                .data(food)
-                .timestamp(String.valueOf(food.getCreatedDate()))
-                .build());
+        return ResponseEntity.ok(ApiResponse.success(food, "Food '" + food.getName() + "' created successfully"));
     }
 
     //Method for bulk food Entries
 
     @PostMapping("/bulk")
     @PreAuthorize("hasAnyRole('ADMIN')")
-    public ResponseEntity<ApiResponse> createBulkFood(@RequestBody List<CreateFoodRequest> requests) throws Exception {
+    public ResponseEntity<ApiResponse<Void>> createBulkFood(@RequestBody List<CreateFoodRequest> requests) throws Exception {
         IfoodService.createBulkFoods(requests);
-
         return ResponseEntity.ok(ApiResponse.success("Bulk Food Saved"));
     }
 
 
-    @DeleteMapping("/delete/{foodId}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_ADMIN')")
-    public ResponseEntity<ApiResponse> deletefood(@PathVariable long foodId) throws Exception {
-        log.info("In Controller Layer ---> ");
-          IfoodService.DeleteFood(foodId);
-          return ResponseEntity.ok(ApiResponse.success("Food With ID :"+ foodId+ "deleted"));
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // Only RestaurantAdmin and Admin Can Delete food
     @DeleteMapping("/{foodId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_ADMIN')")
-    ResponseEntity<ApiResponse>DeleteFood(@PathVariable Long foodId) throws Exception {
+    public ResponseEntity<ApiResponse<Void>> deleteFood(@PathVariable Long foodId) throws Exception {
         IfoodService.DeleteFood(foodId);
-        return ResponseEntity.ok(ApiResponse.success(foodId,"Food Deleted with Id :{foodId} "));
+        return ResponseEntity.ok(ApiResponse.success("Food Deleted with Id: " + foodId));
     }
 
     @GetMapping("/{foodId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_ADMIN')")
-    ResponseEntity<ApiResponse> FindFoodById(@PathVariable Long foodId){
+    public ResponseEntity<ApiResponse<Food>> FindFoodById(@PathVariable Long foodId){
         Food food = IfoodService.findfoodById(foodId);
-        return ResponseEntity.ok(ApiResponse.success(food,"Food Retrieved with id of : {foodId}"));
+        return ResponseEntity.ok(ApiResponse.success(food,"Food Retrieved with id: " + foodId));
     }
 
 //    @GetMapping("/VegFood")
@@ -122,24 +85,9 @@ public class RestaurantFoodController {
 //    }
 
     @PutMapping("/{foodid}")
-     ResponseEntity<ApiResponse>updateFoodAvailablityStatus(@PathVariable Long foodid){
+    @PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_ADMIN')")
+    public ResponseEntity<ApiResponse<Boolean>> updateFoodAvailablityStatus(@PathVariable Long foodid){
         User currentUser = getCurrentUser();
-        Food food = IfoodService.updateFoodAvailablitySatus(currentUser, foodid);
-        return ResponseEntity.ok(ApiResponse.success(food.getIsAvailable(),"Food Id Status "));
-
+        Food food = IfoodService.updateFoodAvailablitySatus(currentUser, foodid);        return ResponseEntity.ok(ApiResponse.success(food.getIsAvailable(),"Food Availability Status Updated"));
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

@@ -80,7 +80,8 @@ public class Appconfig {
 				CorsConfiguration cfg =  new CorsConfiguration();
 				cfg.setAllowedOrigins(Arrays.asList(
 
-						"http://localhost:3000"
+						"http://localhost:3000",
+						"http://localhost:5173"
 						));
 				
 				// Allowed methods for FrontEnd Team

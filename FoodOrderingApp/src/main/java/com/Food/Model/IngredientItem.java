@@ -35,8 +35,8 @@ public class IngredientItem {
 	private Restaurant restaurant;
 	
 	private boolean inStock = true;
-	
-	
-	
 
+
+    public IngredientItem(String s) {
+    }
 }

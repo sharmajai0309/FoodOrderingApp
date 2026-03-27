@@ -178,14 +178,10 @@ public class CartServiceImpl implements IcartService {
     @Transactional(readOnly = true)
     public Cart getCartByCustomer(Long userId) throws Exception {
 
-        long id = getCurrentUser().getId();
-        Cart cart = iCartRepository.findByCustomerId2(userId).orElseThrow(() -> new EntityNotFoundException("cart not found with this User id : " + id));
-        if (cart == null) {
-            throw new Exception("Cart is empty");
-        }
+        // Use the join-fetch query so items + food are loaded eagerly (not lazy-null)
+        Cart cart = iCartRepository.findByCustomerIdWithItems(userId)
+                .orElseThrow(() -> new EntityNotFoundException("Cart not found for user id: " + userId));
         return cart;
-
-
     }
 
     @Override

@@ -8,9 +8,8 @@ import com.Food.Response.UpdateResponseOrder;
 import com.Food.Service.IUserServices;
 import com.Food.Service.OrderService;
 import com.Food.Service.PaymentService;
-import com.Food.dto.OrderDetailsDTO;
-import com.Food.dto.OrderPaymentDTO;
 import com.Food.request.CreateOrderRequest;
+import com.Food.dto.OrderPaymentDTO;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -20,9 +19,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @AllArgsConstructor
@@ -37,7 +34,7 @@ public class OrderController {
     }
 
     @PostMapping("/create")
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'RESTAURANT_OWNER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'RESTAURANT_ADMIN', 'ADMIN')")
     public ResponseEntity<ApiResponse<ResponseOrder>> createOrder(
             @Valid @RequestBody CreateOrderRequest orderRequest) {
         try {
@@ -87,7 +84,7 @@ public class OrderController {
     }
 
     @DeleteMapping("/{orderId}")
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'RESTAURANT_OWNER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'RESTAURANT_ADMIN', 'ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deleteOrder(@PathVariable Long orderId) {
         try {
             orderService.deleteOrder(orderId);
@@ -102,7 +99,7 @@ public class OrderController {
     }
 
     @GetMapping("/user")
-    @PreAuthorize("hasRole('CUSTOMER')")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'RESTAURANT_ADMIN', 'ADMIN')")
     public ResponseEntity<ApiResponse<List<ResponseOrder>>> getUserOrders() {
         try {
             Long userId = getCurrentUserId().getId();
@@ -128,12 +125,14 @@ public class OrderController {
     }
 
     @GetMapping("/{orderId}")
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'RESTAURANT_OWNER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'RESTAURANT_ADMIN', 'ADMIN')")
     public ResponseEntity<ApiResponse<ResponseOrder>> getOrderById(@PathVariable Long orderId) {
         try {
-            orderService.getOrderById(orderId);
-            return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED)
-                    .body(ApiResponse.error("Endpoint not implemented yet"));
+            ResponseOrder responseOrder = orderService.getOrderById(orderId);
+            return ResponseEntity.ok(ApiResponse.success(responseOrder, "Order retrieved successfully"));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ApiResponse.error("Order not found: " + e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(ApiResponse.error("Failed to retrieve order: " + e.getMessage()));

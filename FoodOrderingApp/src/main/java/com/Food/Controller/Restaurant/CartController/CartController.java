@@ -17,7 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+
 
 @Slf4j
 @RestController
@@ -31,8 +31,8 @@ public class CartController {
 
 
     @PutMapping("/add-item")
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'RESTAURANT_OWNER', 'ADMIN')")
-    public ResponseEntity<ApiResponse> addItemToCart(@RequestBody AddCartItemRequest request) {
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'RESTAURANT_ADMIN', 'ADMIN')")
+    public ResponseEntity<ApiResponse<CartItem>> addItemToCart(@RequestBody AddCartItemRequest request) {
         try {
             CartItem cartItem = icartService.addItemToCart(request);
             return ResponseEntity.status(HttpStatus.CREATED)
@@ -44,8 +44,8 @@ public class CartController {
     }
 
     @PutMapping("/updateCartItem")
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'RESTAURANT_OWNER', 'ADMIN')")
-    public ResponseEntity<ApiResponse>UpdateCartItemQuantity(@RequestBody AddCartItemQuantityRequest request){
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'RESTAURANT_ADMIN', 'ADMIN')")
+    public ResponseEntity<ApiResponse<CartItem>>UpdateCartItemQuantity(@RequestBody AddCartItemQuantityRequest request){
         CartItem cartItem;
         try {
             cartItem = icartService.updateCartItemQuantity(request.getCartItemId(), request.getQuantity());
@@ -58,32 +58,29 @@ public class CartController {
 
 
     @DeleteMapping("/delete/{cartItemId}")
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'RESTAURANT_OWNER', 'ADMIN')")
-    public ResponseEntity<ApiResponse>removeItemFromCart(@PathVariable Long cartItemId) throws Exception {
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'RESTAURANT_ADMIN', 'ADMIN')")
+    public ResponseEntity<ApiResponse<Void>>removeItemFromCart(@PathVariable Long cartItemId) throws Exception {
         icartService.removeItemFromCart(cartItemId);
         return ResponseEntity.ok(ApiResponse.success("cartItem deleted"));
     }
 
 
     @PutMapping("/updateCartItemIngredients")
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'RESTAURANT_OWNER', 'ADMIN')")
-    public ResponseEntity<ApiResponse>updateCartItemIngredients(@RequestBody AddCartItemIngredientsRequest request) throws Exception {
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'RESTAURANT_ADMIN', 'ADMIN')")
+    public ResponseEntity<ApiResponse<CartItem>>updateCartItemIngredients(@RequestBody AddCartItemIngredientsRequest request) throws Exception {
         CartItem cartItem = icartService.updateCartItemIngredients(request.getCartItemId(), request.getIngredients());
         return ResponseEntity.ok(ApiResponse.success(cartItem,"Cart Updated with new Ingredients"));
     }
 
-    @GetMapping("/cartId/{cartId}")
-    public ResponseEntity<ApiResponse>getCartByCustomer(@PathVariable Long cartId) throws Exception {
-        Cart cart = icartService.getCartByCustomer(cartId);
-        List<CartItem> items = cart.getItems();
-        Long total = cart.getTotal();
-        ApiResponse<String> ReceivedCart = ApiResponse.success("cartItems : " + items + "CartTotal : " + total, "Cart");
-        return ResponseEntity.ok(ReceivedCart);
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<ApiResponse<Cart>> getCartByUserId(@PathVariable Long userId) throws Exception {
+        Cart cart = icartService.getCartByCustomer(userId);
+        return ResponseEntity.ok(ApiResponse.success(cart, "Cart fetched successfully"));
     }
 
     @DeleteMapping("/clear-Cart/{cartId}")
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'RESTAURANT_OWNER', 'ADMIN')")
-    public ResponseEntity<ApiResponse>clearCart(@PathVariable Long cartId) throws Exception {
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'RESTAURANT_ADMIN', 'ADMIN')")
+    public ResponseEntity<ApiResponse<Void>>clearCart(@PathVariable Long cartId) throws Exception {
         icartService.clearCart(cartId);
         return ResponseEntity.ok(ApiResponse.success("Cart Cleared"));
     }
@@ -91,7 +88,7 @@ public class CartController {
 
     @GetMapping("/Get-cart/{cartId}")
     @PreAuthorize("hasAnyRole('ADMIN')")
-    public ResponseEntity<ApiResponse>getCartById(@PathVariable Long cartId) throws Exception {
+    public ResponseEntity<ApiResponse<Cart>>getCartById(@PathVariable Long cartId) throws Exception {
         Cart cartById = icartService.getCartById(cartId);
         return ResponseEntity.ok(ApiResponse.success(cartById,"Cart Fetched By id : "+cartId));
     }
