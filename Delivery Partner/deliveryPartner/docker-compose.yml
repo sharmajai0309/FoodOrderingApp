@@ -1,0 +1,101 @@
+version: "3.9"
+
+services:
+
+  delivery-postgres:
+    image: postgres:16-alpine
+    container_name: delivery_postgres_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: delivery_partner_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - delivery_postgres_data:/var/lib/postgresql/data
+
+  delivery-pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: delivery_pgadmin_ui
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@delivery.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    ports:
+      - "5050:80"
+    depends_on:
+      - delivery-postgres
+
+  delivery-mongodb:
+    image: mongo:7
+    container_name: delivery_mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - delivery_mongo_data:/data/db
+
+
+  delivery-mongo-ui:
+    image: mongo-express
+    container_name: delivery_mongo_ui
+    restart: unless-stopped
+    environment:
+      ME_CONFIG_MONGODB_SERVER: delivery-mongodb
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: admin123
+    ports:
+      - "8081:8081"
+    depends_on:
+      - delivery-mongodb
+
+  delivery-zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: delivery_zookeeper
+    restart: unless-stopped
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    ports:
+      - "2181:2181"
+
+  delivery-kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: delivery_kafka
+    restart: unless-stopped
+    depends_on:
+      - delivery-zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: delivery-zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://delivery-kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  delivery-kafka-ui:
+    image: provectuslabs/kafka-ui
+    container_name: delivery_kafka_ui
+    restart: unless-stopped
+    ports:
+      - "8090:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: delivery-cluster
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: delivery-kafka:9092
+    depends_on:
+      - delivery-kafka
+
+  delivery-zipkin:
+   image: openzipkin/zipkin
+   container_name: delivery_zipkin
+   restart: unless-stopped
+   ports:
+    - "9411:9411"
+
+volumes:
+  delivery_postgres_data:
+  delivery_mongo_data:
+
+
+
+

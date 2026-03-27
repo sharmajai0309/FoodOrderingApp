@@ -1,0 +1,22 @@
+#| Service               | URL                                            |
+#| --------------------- | ---------------------------------------------- |
+#| Postgres UI (PgAdmin) | [http://localhost:5050](http://localhost:5050) |
+#Email: admin@delivery.com
+#Password: admin123
+
+
+#| Mongo UI              | [http://localhost:8081](http://localhost:8081) |
+#| Kafka UI              | [http://localhost:8090](http://localhost:8090) |
+
+#| Zipkin UI              | [http://localhost:9411](http://localhost:9411) |
+
+
+
+
+Postgres Docker Credentials
+
+Host: delivery-postgres
+Port: 5432
+Username: postgres
+Password: postgres
+Database: delivery_partner_db
