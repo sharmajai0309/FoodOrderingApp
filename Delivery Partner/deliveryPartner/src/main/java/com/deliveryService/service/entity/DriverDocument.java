@@ -18,6 +18,7 @@ public class DriverDocument extends BaseEntity {
     @JoinColumn(name = "partner_id",nullable = false)
     private DeliveryPartner partner;
 
+
     private String documentType;
 
     private String documentUrl;

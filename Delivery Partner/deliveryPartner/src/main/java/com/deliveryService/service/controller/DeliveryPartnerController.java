@@ -8,18 +8,23 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/DeliveryPartners")
+@RequestMapping("/api/deliveryPartners")
 @RequiredArgsConstructor
 public class DeliveryPartnerController {
 
     private final DeliveryPartnerService deliveryPartnerService;
 
+    /**
+     * register
+     *
+     * @param request request
+     * @return {@link ResponseEntity}
+     * @see ResponseEntity
+     * @see ApiResponse
+     */
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<DeliveryPartnerResponseDTO>> register(
             @Valid @RequestBody DeliveryPartnerRegistrationRequest request) {
@@ -31,5 +36,32 @@ public class DeliveryPartnerController {
                         request.getName() + ", your registration is successful. Please upload documents for activation."));
     }
 
+
+    /**
+     * update register details
+     *
+     * @param id id
+     * @param request request
+     * @return {@link ResponseEntity}
+     * @see ResponseEntity
+     * @see ApiResponse
+     */
+    @PutMapping("/{id}/register-details")
+    public ResponseEntity<ApiResponse<DeliveryPartnerResponseDTO>> updateRegisterDetails(
+            @PathVariable Long id,
+            @Valid @RequestBody DeliveryPartnerRegistrationRequest request) {
+
+        DeliveryPartnerResponseDTO response = deliveryPartnerService.updateRegisterDetails(id, request);
+
+        return ResponseEntity.ok(
+                ApiResponse.success(response, "Delivery partner details updated successfully")
+        );
+    }
+
+    //implementation in admin panel or regional admin panel
+//    get registration detail of deliveryPartner
+//    get details by name
+//    get details by vehicleType type
+//    get details by status
 
 }

@@ -1,5 +1,8 @@
 package com.deliveryService.service.exception.customexception.baseexception;
 
+import lombok.Getter;
+
+@Getter
 public class DeliveryPartnerException extends RuntimeException{
 
     private final String errorCode;
@@ -10,9 +13,6 @@ public class DeliveryPartnerException extends RuntimeException{
         this.errorCode = errorCode;
         this.status = status;
     }
-
-    public String getErrorCode() { return errorCode; }
-    public int getStatus() { return status; }
 
 
 }
