@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/deliveryPartners")
 @RequiredArgsConstructor
@@ -17,14 +19,6 @@ public class DeliveryPartnerController {
 
     private final DeliveryPartnerService deliveryPartnerService;
 
-    /**
-     * register
-     *
-     * @param request request
-     * @return {@link ResponseEntity}
-     * @see ResponseEntity
-     * @see ApiResponse
-     */
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<DeliveryPartnerResponseDTO>> register(
             @Valid @RequestBody DeliveryPartnerRegistrationRequest request) {
@@ -32,20 +26,10 @@ public class DeliveryPartnerController {
                 deliveryPartnerService.registerDriver(request);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.success(responseDTO, 
+                .body(ApiResponse.success(responseDTO,
                         request.getName() + ", your registration is successful. Please upload documents for activation."));
     }
 
-
-    /**
-     * update register details
-     *
-     * @param id id
-     * @param request request
-     * @return {@link ResponseEntity}
-     * @see ResponseEntity
-     * @see ApiResponse
-     */
     @PutMapping("/{id}/register-details")
     public ResponseEntity<ApiResponse<DeliveryPartnerResponseDTO>> updateRegisterDetails(
             @PathVariable Long id,
@@ -58,10 +42,29 @@ public class DeliveryPartnerController {
         );
     }
 
-    //implementation in admin panel or regional admin panel
-//    get registration detail of deliveryPartner
-//    get details by name
-//    get details by vehicleType type
-//    get details by status
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<DeliveryPartnerResponseDTO>> getProfile(@PathVariable Long id) {
+        DeliveryPartnerResponseDTO response = deliveryPartnerService.getPartnerById(id);
+        return ResponseEntity.ok(ApiResponse.success(response, "Profile fetched successfully"));
+    }
+
+    @GetMapping("/{id}/earnings")
+    public ResponseEntity<ApiResponse<com.deliveryService.service.dto.response.EarningsSummaryDTO>> getEarnings(
+            @PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.success(
+                deliveryPartnerService.getEarningsSummary(id), "Earnings fetched successfully"));
+    }
+
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<DeliveryPartnerResponseDTO>>> getAllPartners() {
+        return ResponseEntity.ok(ApiResponse.success(
+                deliveryPartnerService.getAllPartners(), "Fetched all delivery partners"));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<Void>> deletePartner(@PathVariable Long id) {
+        deliveryPartnerService.deletePartner(id);
+        return ResponseEntity.ok(ApiResponse.success(null, "Delivery partner deleted successfully"));
+    }
 
 }

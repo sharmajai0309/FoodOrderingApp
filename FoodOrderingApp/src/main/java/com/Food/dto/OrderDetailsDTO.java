@@ -1,6 +1,6 @@
 package com.Food.dto;
 
-
+import com.Food.Model.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public class OrderDetailsDTO {
     private Long id;
     private Long totalAmount;
-    private String orderStatus;
+    private OrderStatus orderStatus;
     private LocalDateTime createdAt;
     private String deliveryAddressStreet;
     private String deliveryAddressCity;

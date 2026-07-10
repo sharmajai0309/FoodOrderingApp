@@ -1,0 +1,4 @@
+"order.confirmed"  → Delivery Service (assign driver)
+"order.cancelled"  → Delivery Service (release driver)  
+"driver.assigned"  → Notification Service (SMS customer)
+"order.delivered"  → Both apps (update MySQL + earnings)

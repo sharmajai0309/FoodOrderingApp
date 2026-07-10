@@ -1,0 +1,191 @@
+You are a senior backend architect designing a Delivery Management System for a food ordering platform.
+
+The system must integrate with an existing Restaurant Service and follow an event-driven architecture.
+
+Your task is to design the entire delivery system before implementation. The output must be structured and production-ready.
+
+---
+
+SYSTEM CONTEXT
+
+The platform contains three independent services:
+
+1. Restaurant Service
+2. Delivery Service
+3. Notification Service (future implementation)
+
+The Restaurant Service manages orders and payments.
+
+When an order is confirmed or paid, the Restaurant Service publishes an ORDER_CONFIRMED event.
+
+The Delivery Service listens to this event and becomes responsible for assigning a delivery partner and managing the delivery lifecycle.
+
+---
+
+DATABASE ARCHITECTURE
+
+The Delivery Service uses two databases:
+
+PostgreSQL is used for transactional business data such as:
+
+• delivery partner profiles
+• delivery assignments
+• delivery partner documents
+• driver earnings
+• partner availability
+
+MongoDB is used for event-driven data such as:
+
+• delivery event logs
+• delivery activity timeline
+• delivery status history
+• system activity logs
+
+This polyglot persistence architecture improves performance, scalability, and separation of workloads.
+
+---
+
+SECTION 1 — CODE STORY
+
+Write a clear system story describing how the delivery platform works from start to finish.
+
+Include:
+
+• delivery partner registration
+• document upload and admin approval
+• order confirmation event from restaurant service
+• delivery assignment process
+• driver accepting delivery
+• delivery lifecycle updates
+• delivery completion
+• event logging in MongoDB
+
+Describe the system flow as a sequence of interactions between services and users.
+
+---
+
+SECTION 2 — ENTITY DESIGN
+
+Design all entities required for the Delivery Service.
+
+Separate them based on the database used.
+
+PostgreSQL entities may include:
+
+• DeliveryPartner
+• DeliveryDocument
+• DeliveryAssignment
+• DriverEarnings
+• DriverAvailability
+
+MongoDB collections may include:
+
+• DeliveryEventLog
+• DeliveryTimeline
+• DriverActivityLog
+
+For each entity define:
+
+• fields
+• relationships
+• purpose
+
+---
+
+SECTION 3 — EVENT DESIGN
+
+Define the events used in the system.
+
+Examples:
+
+• ORDER_CONFIRMED
+• DELIVERY_ASSIGNED
+• DELIVERY_ACCEPTED
+• DELIVERY_PICKED_UP
+• DELIVERY_COMPLETED
+
+Explain which service publishes each event and which service consumes it.
+
+---
+
+SECTION 4 — DELIVERY LIFECYCLE
+
+Define the complete delivery status flow.
+
+Example:
+
+ASSIGNED
+ACCEPTED
+REACHED_RESTAURANT
+PICKED_UP
+OUT_FOR_DELIVERY
+DELIVERED
+
+Explain how status updates are stored in PostgreSQL and how event logs are stored in MongoDB.
+
+---
+
+SECTION 5 — PHASE-WISE IMPLEMENTATION PLAN
+
+Break the entire delivery system into clean implementation phases.
+
+Each phase must be small and independently implementable.
+
+Example phases:
+
+Phase 1 – Delivery Service Foundation
+Phase 2 – Delivery Partner Registration
+Phase 3 – Admin Approval System
+Phase 4 – Order Event Listener
+Phase 5 – Delivery Assignment Engine
+Phase 6 – Driver Order Management
+Phase 7 – Delivery Lifecycle Management
+Phase 8 – Delivery Event Logging (MongoDB)
+Phase 9 – Driver App Integration
+Phase 10 – Delivery Analytics and Monitoring
+
+Each phase should include:
+
+• goal
+• entities required
+• APIs to build
+• events involved
+
+---
+
+SECTION 6 — PROJECT STRUCTURE
+
+Design the backend project structure for the delivery service.
+
+Example structure:
+
+delivery-service
+├── controller
+├── service
+├── repository
+│     ├── postgres
+│     └── mongo
+├── model
+│     ├── postgres
+│     └── mongo
+├── dto
+├── event
+├── config
+└── util
+
+---
+
+SECTION 7 — FUTURE EXTENSIONS
+
+Design the system so that future features can be easily added, such as:
+
+• live driver location tracking
+• smart delivery partner matching
+• delivery analytics
+• notification service integration
+
+---
+
+FINAL GOAL
+
+Produce a clean and scalable architecture plan that will guide the full implementation of the Delivery Service using Spring Boot, PostgreSQL, MongoDB, and Kafka.

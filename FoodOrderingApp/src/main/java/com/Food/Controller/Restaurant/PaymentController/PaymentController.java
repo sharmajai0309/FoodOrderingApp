@@ -1,5 +1,6 @@
 package com.Food.Controller.Restaurant.PaymentController;
 
+import com.Food.Model.OrderStatus;
 import com.Food.Service.OrderService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ public class PaymentController {
             @RequestParam Long orderId) throws Exception {
 
 
-        orderService.updateOrder(orderId, "PAID");
+        orderService.updateOrder(orderId, OrderStatus.PAID);
 
         return ResponseEntity.ok("Payment successful for order " + orderId);
     }
@@ -31,7 +32,7 @@ public class PaymentController {
     public ResponseEntity<String> paymentCancel(
             @RequestParam Long orderId) throws Exception {
 
-        orderService.updateOrder(orderId, "PAYMENT_CANCELLED");
+        orderService.updateOrder(orderId, OrderStatus.PAYMENT_CANCELLED);
 
         return ResponseEntity.ok("Payment cancelled for order " + orderId);
     }

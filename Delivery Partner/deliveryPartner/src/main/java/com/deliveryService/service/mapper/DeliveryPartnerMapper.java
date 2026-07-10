@@ -1,26 +1,38 @@
 package com.deliveryService.service.mapper;
 
-import com.deliveryService.service.entity.DeliveryPartner;
 import com.deliveryService.service.dto.request.DeliveryPartnerRegistrationRequest;
 import com.deliveryService.service.dto.response.DeliveryPartnerResponseDTO;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import com.deliveryService.service.entity.DeliveryPartner;
+import com.deliveryService.service.entity.Enums.PartnerStatus;
+import org.springframework.stereotype.Component;
 
-@Mapper(componentModel = "spring")
-public interface DeliveryPartnerMapper {
+@Component
+public class DeliveryPartnerMapper {
 
-    //  Request → Entity
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "status", constant = "PENDING")
-    @Mapping(target = "documents", ignore = true)
-    @Mapping(target = "verification", ignore = true)
-    @Mapping(target = "availability", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "version", ignore = true)
-    DeliveryPartner toEntity(DeliveryPartnerRegistrationRequest request);
+    /**
+     * Maps DeliveryPartnerRegistrationRequest → DeliveryPartner entity
+     */
+    public DeliveryPartner toEntity(DeliveryPartnerRegistrationRequest request) {
+        DeliveryPartner partner = new DeliveryPartner();
+        partner.setName(request.getName());
+        partner.setPhone(request.getPhone());
+        partner.setVehicleType(request.getVehicleType());
+        partner.setStatus(PartnerStatus.PENDING);
+        return partner;
+    }
 
-
-    //  Entity → ResponseDTO
-    DeliveryPartnerResponseDTO toDTO(DeliveryPartner entity);
+    /**
+     * Maps DeliveryPartner entity → DeliveryPartnerResponseDTO
+     */
+    public DeliveryPartnerResponseDTO toDTO(DeliveryPartner partner) {
+        DeliveryPartnerResponseDTO dto = new DeliveryPartnerResponseDTO();
+        dto.setId(partner.getId());
+        dto.setName(partner.getName());
+        dto.setPhone(partner.getPhone());
+        dto.setVehicleType(partner.getVehicleType());
+        dto.setStatus(partner.getStatus());
+        dto.setCreatedAt(partner.getCreatedAt());
+        dto.setUpdatedAt(partner.getUpdatedAt());
+        return dto;
+    }
 }

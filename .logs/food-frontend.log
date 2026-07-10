@@ -1,0 +1,16 @@
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v7.3.1  ready in 424 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+[vite:css][postcss] @import must precede all other statements (besides @charset or empty @layer)
+3276 |    }
+3277 |  }
+3278 |  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+     |  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+3279 |  @layer base {
+3280 |    :root {

@@ -1,0 +1,2 @@
+time="2026-05-19T19:10:01+05:30" level=warning msg="/Users/jai/Documents/FoodOrderingApp/Delivery Partner/deliveryPartner/docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion"
+unable to get image 'confluentinc/cp-zookeeper:7.5.0': Cannot connect to the Docker daemon at unix:///Users/jai/.docker/run/docker.sock. Is the docker daemon running?

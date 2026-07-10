@@ -1,5 +1,6 @@
 package com.Food.Controller.Restaurant.OrderController;
 
+import com.Food.Model.OrderStatus;
 import com.Food.Model.User;
 import com.Food.Response.ApiResponse;
 import com.Food.Response.PaymentResponse;
@@ -55,9 +56,6 @@ public class OrderController {
             responseOrder.setPaymentUrl(paymentLink.getUrl());
 
 
-
-
-
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(ApiResponse.success(responseOrder, "Order created successfully"));
         } catch (Exception e) {
@@ -70,7 +68,7 @@ public class OrderController {
     @PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_ADMIN')")
     public ResponseEntity<ApiResponse<UpdateResponseOrder>> updateOrderStatus(
             @PathVariable Long orderId,
-            @RequestParam String status) {
+            @RequestParam OrderStatus status) {
         try {
             UpdateResponseOrder updatedOrder = orderService.updateOrder(orderId, status);
             return ResponseEntity.ok(ApiResponse.success(updatedOrder, "Order status updated successfully"));

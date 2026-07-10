@@ -1,29 +1,25 @@
 package com.deliveryService.service.entity.base;
 
-import java.time.Instant;
-
-import jakarta.persistence.Id;
-import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.CreatedDate;
 
+import java.time.Instant;
+
+/**
+ * Base class for all MongoDB documents.
+ * Uses Spring Data MongoDB annotations — NOT JPA.
+ *
+ * Used by: DeliveryEventLog, DriverActivityLog
+ */
 @Setter
 @Getter
-@MappedSuperclass
 public abstract class BaseMongoDocument {
 
     @Id
-    private String id;
+    private String id;  // MongoDB ObjectId → stored as String
 
+    @CreatedDate
     private Instant createdAt = Instant.now();
-
-    /*
-     * This Base class used in this Class in is used in future implementation of these modules
-     * 
-     * DeliveryEventLog
-     * DriverActivityLog
-     * DeliveryTimeline
-     * 
-     * 
-     */
 }

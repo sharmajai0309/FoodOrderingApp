@@ -1,0 +1,380 @@
+{
+  "info": {
+    "name": "Delivery Partner Service",
+    "_postman_id": "dp-service-collection-v1",
+    "description": "Complete API collection for the Delivery Partner microservice (port 8082).\n\nFlow:\n1. Register driver\n2. Upload documents\n3. Admin approves\n4. Driver goes online\n5. Main service assigns order\n6. Driver accepts -> picks up -> delivers\n\nSet {{baseUrl}} = http://localhost:8082",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8082", "type": "string" },
+    { "key": "driverId", "value": "1", "type": "string" },
+    { "key": "assignmentId", "value": "1", "type": "string" },
+    { "key": "orderId", "value": "1001", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "1. Driver Registration",
+      "description": "Driver self-registration and profile management",
+      "item": [
+        {
+          "name": "Register Driver",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/deliveryPartners/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "deliveryPartners", "register"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Rahul Sharma\",\n  \"phone\": \"9876543210\",\n  \"vehicleType\": \"BIKE\"\n}"
+            },
+            "description": "Register a new delivery partner. Status starts as PENDING.\nVehicleType: BIKE, SCOOTER, CAR, VAN"
+          }
+        },
+        {
+          "name": "Get Driver Profile",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/deliveryPartners/{{driverId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "deliveryPartners", "{{driverId}}"]
+            },
+            "description": "Fetch a partner's profile by ID."
+          }
+        },
+        {
+          "name": "Update Registration Details",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/deliveryPartners/{{driverId}}/register-details",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "deliveryPartners", "{{driverId}}", "register-details"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Rahul Kumar Sharma\",\n  \"phone\": \"9876543210\",\n  \"vehicleType\": \"SCOOTER\"\n}"
+            },
+            "description": "Update driver name, phone, or vehicle type."
+          }
+        },
+        {
+          "name": "Get Driver Earnings Summary",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/deliveryPartners/{{driverId}}/earnings",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "deliveryPartners", "{{driverId}}", "earnings"]
+            },
+            "description": "Total, this week, this month earnings + delivery counts."
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Documents",
+      "description": "KYC document upload by driver",
+      "item": [
+        {
+          "name": "Upload Aadhaar Card",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/driverDocument/{{driverId}}/documents",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "driverDocument", "{{driverId}}", "documents"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"documentType\": \"AADHAR\",\n  \"documentUrl\": \"https://storage.example.com/docs/aadhar_9876543210.pdf\"\n}"
+            },
+            "description": "Upload Aadhaar card. Status moves to DOCUMENT_VERIFICATION_PENDING after first upload."
+          }
+        },
+        {
+          "name": "Upload Driving Licence",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/driverDocument/{{driverId}}/documents",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "driverDocument", "{{driverId}}", "documents"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"documentType\": \"DRIVING_LICENCE\",\n  \"documentUrl\": \"https://storage.example.com/docs/dl_9876543210.pdf\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Upload PAN Card",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/driverDocument/{{driverId}}/documents",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "driverDocument", "{{driverId}}", "documents"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"documentType\": \"PAN\",\n  \"documentUrl\": \"https://storage.example.com/docs/pan_9876543210.pdf\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Admin",
+      "description": "Admin endpoints for driver verification management",
+      "item": [
+        {
+          "name": "Get Pending Drivers",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/driver/pending",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "driver", "pending"]
+            },
+            "description": "All drivers with DOCUMENT_VERIFICATION_PENDING status."
+          }
+        },
+        {
+          "name": "Approve Driver",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/driver/{{driverId}}/approve",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "driver", "{{driverId}}", "approve"]
+            },
+            "description": "Approve a driver. Status -> ACTIVE, verification -> APPROVED.\nDriver must be in DOCUMENT_VERIFICATION_PENDING state."
+          }
+        },
+        {
+          "name": "Reject Driver",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/driver/{{driverId}}/reject?reason=Documents are unclear, please re-upload",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "driver", "{{driverId}}", "reject"],
+              "query": [
+                { "key": "reason", "value": "Documents are unclear, please re-upload" }
+              ]
+            },
+            "description": "Reject a driver with a mandatory reason. Status -> DOCUMENT_VERIFICATION_REJECTED."
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Driver Availability",
+      "description": "Driver online/offline toggle and status check",
+      "item": [
+        {
+          "name": "Toggle Availability (No Location)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/drivers/{{driverId}}/availability/toggle",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "drivers", "{{driverId}}", "availability", "toggle"]
+            },
+            "body": { "mode": "raw", "raw": "{}" },
+            "description": "Toggle online/offline. Call once = ONLINE, call again = OFFLINE.\nDriver must be ACTIVE status."
+          }
+        },
+        {
+          "name": "Toggle Availability (With GPS Location)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/drivers/{{driverId}}/availability/toggle",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "drivers", "{{driverId}}", "availability", "toggle"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"latitude\": 28.6139,\n  \"longitude\": 77.2090\n}"
+            },
+            "description": "Toggle with driver GPS coordinates (New Delhi example)."
+          }
+        },
+        {
+          "name": "Get Driver Availability Status",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/drivers/{{driverId}}/availability",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "drivers", "{{driverId}}", "availability"]
+            },
+            "description": "Current online/offline status + last known location."
+          }
+        },
+        {
+          "name": "Get All Available (Online) Drivers",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/drivers/available",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "drivers", "available"]
+            },
+            "description": "List all currently online drivers. Used by admin or order assignment engine."
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Delivery Assignment",
+      "description": "Full delivery lifecycle: assign -> accept -> pickup -> deliver",
+      "item": [
+        {
+          "name": "Assign Order to Driver (Main Service Call)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/delivery/assign",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "delivery", "assign"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderId\": 1001,\n  \"restaurantId\": 5,\n  \"restaurantName\": \"Spice Garden\",\n  \"customerAddress\": \"123, MG Road, Bangalore - 560001\"\n}"
+            },
+            "description": "Called by the main food ordering service. Auto-assigns to first available ACTIVE driver.\nReturns error if no drivers are online."
+          }
+        },
+        {
+          "name": "Driver Accepts Assignment",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/delivery/{{assignmentId}}/accept?driverId={{driverId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "delivery", "{{assignmentId}}", "accept"],
+              "query": [{ "key": "driverId", "value": "{{driverId}}" }]
+            },
+            "description": "Driver taps Accept. Status: ASSIGNED -> ACCEPTED.\nLogs to MongoDB driver_activity_log."
+          }
+        },
+        {
+          "name": "Driver Marks Picked Up",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/delivery/{{assignmentId}}/pickup?driverId={{driverId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "delivery", "{{assignmentId}}", "pickup"],
+              "query": [{ "key": "driverId", "value": "{{driverId}}" }]
+            },
+            "description": "Driver picks up from restaurant. Status: ACCEPTED -> PICKED_UP.\nRecords pickedAt timestamp."
+          }
+        },
+        {
+          "name": "Driver Marks Delivered",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/delivery/{{assignmentId}}/deliver?driverId={{driverId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "delivery", "{{assignmentId}}", "deliver"],
+              "query": [{ "key": "driverId", "value": "{{driverId}}" }]
+            },
+            "description": "Delivery complete. Status: PICKED_UP -> DELIVERED.\nAuto-credits Rs.30 to driver_earnings.\nLogs to MongoDB."
+          }
+        },
+        {
+          "name": "Cancel Assignment",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/delivery/{{assignmentId}}/cancel?reason=Driver+unavailable",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "delivery", "{{assignmentId}}", "cancel"],
+              "query": [{ "key": "reason", "value": "Driver unavailable" }]
+            },
+            "description": "Cancel an active assignment. Cannot cancel DELIVERED orders."
+          }
+        },
+        {
+          "name": "Get Assignment by Order ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/delivery/order/{{orderId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "delivery", "order", "{{orderId}}"]
+            },
+            "description": "Main food service calls this to check current delivery status for an order."
+          }
+        },
+        {
+          "name": "Get Driver Delivery History",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/delivery/driver/{{driverId}}/history",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "delivery", "driver", "{{driverId}}", "history"]
+            },
+            "description": "Full delivery history for a driver, newest first."
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Health and Actuator",
+      "description": "Service health monitoring",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/actuator/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["actuator", "health"]
+            },
+            "description": "Shows status of PostgreSQL and MongoDB connections."
+          }
+        },
+        {
+          "name": "Actuator Info",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/actuator/info",
+              "host": ["{{baseUrl}}"],
+              "path": ["actuator", "info"]
+            }
+          }
+        },
+        {
+          "name": "Actuator Metrics",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/actuator/metrics",
+              "host": ["{{baseUrl}}"],
+              "path": ["actuator", "metrics"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

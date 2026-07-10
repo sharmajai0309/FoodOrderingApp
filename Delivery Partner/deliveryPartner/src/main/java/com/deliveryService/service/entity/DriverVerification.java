@@ -3,6 +3,7 @@ package com.deliveryService.service.entity;
 
 import com.deliveryService.service.entity.base.BaseEntity;
 import com.deliveryService.service.entity.Enums.VerificationStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,6 +15,7 @@ public class DriverVerification extends BaseEntity {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "partner_id", nullable = false, unique = true)
+    @JsonIgnore
     private DeliveryPartner partner;
 
     @Enumerated(EnumType.STRING)

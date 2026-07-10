@@ -120,6 +120,12 @@
 			<version>31.0.0</version>
 		</dependency>
 
+<!--		Kafka Producer -->
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
+		</dependency>
+
 	</dependencies>
 
 	<build>

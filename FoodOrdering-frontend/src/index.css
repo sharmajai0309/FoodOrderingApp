@@ -1,0 +1,290 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+@theme {
+  --color-primary-50: #fff4ef;
+  --color-primary-100: #ffe4d5;
+  --color-primary-200: #ffc4a0;
+  --color-primary-300: #ff9d66;
+  --color-primary-400: #ff7534;
+  --color-primary-500: #FF7A2F;
+  --color-primary: #FF7A2F;
+  --color-primary-gradient: linear-gradient(135deg, #FF9D66 0%, #FF7A2F 100%);
+  --color-primary-shadow: rgba(255, 122, 47, 0.2);
+
+  --color-warm-50: #fdf8f5;
+  --color-warm-100: #f8f0e8;
+  --color-warm-200: #f0dece;
+  
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-border: var(--border);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-ring: var(--ring);
+
+  --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+@layer base {
+  :root {
+    --background: #f8f5f2;
+    --foreground: #101828;
+    --primary: #ff5500;
+    --primary-foreground: #ffffff;
+    --border: #eaecf0;
+    --card: #ffffff;
+    --card-foreground: #101828;
+    --muted: #f4f0ec;
+    --muted-foreground: #475467;
+    --accent: #fff4ef;
+    --accent-foreground: #101828;
+    --destructive: #d92d20;
+    --destructive-foreground: #ffffff;
+    --ring: #ff5500;
+    --radius: 0.75rem;
+    --shadow-color: rgba(255, 85, 0, 0.08);
+  }
+
+  .dark {
+    --background: #0b0f19;
+    --foreground: #f8fafc;
+    --primary: #ff5500;
+    --primary-foreground: #ffffff;
+    --border: #1e293b;
+    --card: #0f172a;
+    --card-foreground: #f8fafc;
+    --muted: #1e293b;
+    --muted-foreground: #94a3b8;
+    --accent: #1e293b;
+    --accent-foreground: #f8fafc;
+    --destructive: #ef4444;
+    --destructive-foreground: #f8fafc;
+    --ring: #e04100;
+    --shadow-color: rgba(0, 0, 0, 0.4);
+  }
+}
+
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    @apply antialiased min-h-screen text-slate-800 dark:text-slate-100;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+}
+
+/* ─── Utility Classes ─────────────────────────────── */
+@layer utilities {
+  .glass {
+    @apply bg-white/70 dark:bg-slate-900/40 backdrop-blur-md border border-white/20 dark:border-white/5;
+  }
+  
+  .glass-dark {
+    @apply bg-slate-950/40 backdrop-blur-xl border border-white/10;
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-linear-to-r from-primary to-amber-500;
+  }
+
+  .primary-gradient {
+    background: var(--color-primary-gradient);
+  }
+
+  .mobile-shadow {
+    box-shadow: 0 10px 30px -4px var(--color-primary-shadow);
+  }
+
+  .premium-shadow {
+    box-shadow: 0 20px 60px -10px var(--color-primary-shadow), 0 8px 24px -4px rgba(0,0,0,0.05);
+  }
+
+  .card-shadow {
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03), 0 1px 2px rgba(0,0,0,0.02);
+  }
+
+  .card-shadow-hover {
+    box-shadow: 0 15px 40px -10px rgba(0,0,0,0.08), 0 5px 15px -3px rgba(0,0,0,0.03);
+  }
+
+  .hover-lift {
+    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-xl;
+  }
+  
+  .btn-primary {
+    @apply relative overflow-hidden font-black rounded-full px-8 py-4 text-sm text-white shadow-lg transition-all active:scale-95;
+    background: var(--color-primary-gradient);
+    box-shadow: 0 8px 20px -4px var(--color-primary-shadow);
+  }
+
+  .btn-primary:hover {
+    @apply scale-[1.02] shadow-xl;
+    filter: brightness(1.05);
+  }
+
+  .food-card {
+    @apply bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-50 dark:border-slate-800/50 overflow-hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .food-card:hover {
+    @apply -translate-y-2;
+    box-shadow: 0 20px 40px -10px rgba(0,0,0,0.08);
+  }
+
+  .badge-tag {
+    @apply inline-flex items-center gap-1 text-[11px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none font-medium text-sm transition-all;
+    @apply focus:ring-2 focus:ring-primary/20 focus:border-primary;
+    @apply placeholder:text-slate-400;
+  }
+
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.6) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.8s ease-in-out infinite;
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #e2e8f0 transparent;
+  }
+
+  .page-enter {
+    animation: pageEnter 0.4s ease forwards;
+  }
+}
+
+/* ─── Animations ─────────────────────────────────── */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes pageEnter {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 85, 0, 0.5); }
+  70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(255, 85, 0, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 85, 0, 0); }
+}
+
+@keyframes ripple {
+  to { transform: scale(4); opacity: 0; }
+}
+
+/* ─── Custom Scrollbar ─────────────────────────────── */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 12px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* ─── Recharts overrides ───────────────────────────── */
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+  stroke: #f1f5f9;
+}
+
+.dark .recharts-cartesian-grid-horizontal line,
+.dark .recharts-cartesian-grid-vertical line {
+  stroke: #1e293b;
+}
+
+.recharts-tooltip-wrapper {
+  outline: none !important;
+}
+
+/* ─── Toast overrides ──────────────────────────────── */
+.Toastify__toast {
+  border-radius: 16px !important;
+  font-family: var(--font-sans) !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12) !important;
+}
+
+.Toastify__toast--success {
+  background: #f0fdf4 !important;
+  color: #166534 !important;
+  border: 1px solid #bbf7d0 !important;
+}
+
+.Toastify__toast--error {
+  background: #fef2f2 !important;
+  color: #991b1b !important;
+  border: 1px solid #fecaca !important;
+}
+
+.Toastify__progress-bar--success {
+  background: #22c55e !important;
+}
+
+.Toastify__progress-bar--error {
+  background: #ef4444 !important;
+}
+
+/* ─── Selection highlight ───────────────────────────── */
+::selection {
+  background-color: rgba(255, 85, 0, 0.15);
+  color: #ff5500;
+}

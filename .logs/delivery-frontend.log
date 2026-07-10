@@ -1,0 +1,16 @@
+
+> delivery-frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.0.3  ready in 348 ms
+
+  ➜  Local:   http://localhost:5174/
+  ➜  Network: use --host to expose
+[vite:css][postcss] @import must precede all other statements (besides @charset or empty @layer)
+1116 |    }
+1117 |  }
+1118 |  @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,1...
+     |  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1119 |  :root {
+1120 |    --bg-primary: #060b14;

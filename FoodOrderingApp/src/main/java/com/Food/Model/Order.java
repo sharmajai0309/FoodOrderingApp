@@ -30,8 +30,19 @@ public class Order {
 	
     
     private Long totalAmount;
-    private String orderStatus;
+    
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
+    
     private LocalDateTime createdAt;
+    
+    private Long deliveryPartnerId;
+    
+    private LocalDateTime acceptedAt;
+    private LocalDateTime preparingAt;
+    private LocalDateTime pickedUpAt;
+    private LocalDateTime outForDeliveryAt;
+    private LocalDateTime deliveredAt;
     
     @ManyToOne
     private Address deliveryAddress;

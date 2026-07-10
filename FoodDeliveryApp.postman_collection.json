@@ -1,0 +1,1340 @@
+{
+	"info": {
+		"_postman_id": "26278d00-02c2-4292-89c0-1d7fd18c37d0",
+		"name": "FoodDeliveryApp",
+		"description": "# FoodDeliveryApp API Documentation\n\n## Overview\n\nThe FoodDeliveryApp API provides a comprehensive set of endpoints to manage user authentication, restaurant data, and administrative functions for a food delivery platform. It enables developers to integrate user signup, login, profile management, and restaurant management features into their applications.\n\n## Getting Started Guide\n\nTo start using the FoodDeliveryApp API, follow these steps:\n\n1. Obtain a valid API key or authentication token by signing up and logging in using the provided endpoints.\n    \n2. Use the authentication token in the headers of your requests to access protected endpoints.\n    \n3. Make API requests over HTTPS to ensure secure communication.\n    \n4. Use the base URL variable `{{baseUrl}}` to construct your API requests.\n    \n5. Handle JSON responses and check for error keys in case of failures.\n    \n\n## Authentication\n\nThe FoodDeliveryApp API uses token-based authentication. Users must first register using the Signup endpoint and then authenticate using the Login endpoint to receive an access token.\n\n- **Signup:** `POST {{baseUrl}}/v1/auth/signup` - Register a new user.\n    \n- **Login:** `POST {{baseUrl}}/v1/auth/login` - Authenticate and receive a token.\n    \n\nInclude the token in the `Authorization` header as a Bearer token for subsequent requests.\n\n### Authentication Error Response\n\nIf authentication fails or the token is missing/invalid, the API returns an HTTP 401 Unauthorized response.\n\n## Rate and Usage Limits\n\n- The API enforces rate limits of 300 requests per minute per API key or token.\n    \n- Exceeding the limit results in an HTTP 429 Too Many Requests response.\n    \n- Response headers include:\n    - `X-RateLimit-Limit`: Maximum requests allowed per minute.\n        \n    - `X-RateLimit-Remaining`: Remaining requests in the current window.\n        \n    - `X-RateLimit-Reset`: Time when the rate limit resets (UTC epoch seconds).\n        \n\n### 503 Service Unavailable\n\nAn HTTP 503 response indicates a temporary server overload. The service usually recovers within minutes. Persistent issues should be reported to support.\n\n## API Endpoints\n\n### Authentication Services (User)\n\n- [Signup](https://request/33016627-584cfa10-57c8-48f0-b029-18666bc01aef): Register a new user account.\n    \n- [Login](https://request/33016627-ac9e0622-7551-4442-8cf1-2cd819998fcd): Authenticate a user and obtain a token.\n    \n- [User Profiles](https://request/33016627-e4d1fc9e-9cd5-4395-8340-8ce1f0562bd0): Get profile information of the authenticated user.\n    \n\n### Restaurant Administration\n\n- [GetAllUser(only for Testing)](https://request/33016627-a0a9927a-018d-445b-bd15-bea2408dd8c5): Retrieve all users (for testing purposes only).\n    \n- [CreateRestaurant](https://request/33016627-cbf86081-f93a-4772-b788-3b6748ce9ebb): Create a new restaurant entry.\n    \n- [UpdateRestaurantStatus](https://request/33016627-2f79525f-0aec-4bba-a84d-f1e8e165a630): Update the status of a restaurant by its ID.\n    \n- [GetResturantByID](https://request/33016627-cb84f719-865b-43f8-aec9-f707d6413d66): Get details of a restaurant by its ID.\n    \n- [UpdateResturantByID](https://request/33016627-0c1a4de9-f596-4a3f-a461-cb40280e69e8): Update details of a restaurant by its ID.\n    \n\n## Error Handling\n\n- Authentication errors return HTTP 401 Unauthorized.\n    \n- Rate limit violations return HTTP 429 Too Many Requests.\n    \n- Server errors may return HTTP 5XX status codes.\n    \n- Error details are provided in the JSON response under an `error` key.\n    \n\n## Need Help?\n\n- Visit our [support page](https://support.postman.com/hc/en-us/requests/new/) for assistance.\n    \n- Check out our community forum for discussions and solutions.\n    \n\nThis documentation will help you effectively use the FoodDeliveryApp API to build and manage your food delivery services.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33016627",
+		"_collection_link": "https://perosnal-3159.postman.co/workspace/personal-apis~2de990ea-97d2-480d-a8a1-a723b71e9606/collection/33016627-26278d00-02c2-4292-89c0-1d7fd18c37d0?action=share&source=collection_link&creator=33016627"
+	},
+	"item": [
+		{
+			"name": "AuthServices(User)",
+			"item": [
+				{
+					"name": "Signup",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"{{Username}}\",\n  \"email\": \"{{Email}}\",\n  \"password\": \"{{Password}}\",\n  \"role\": \"{{OwnerOrCustomerOnly}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/v1/auth/signup",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"auth",
+								"signup"
+							]
+						},
+						"description": "Gets information about the authenticated user."
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"{{username}}\",\n    \"password\": \"{{Password}}\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/v1/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User Profiles",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqYWkiLCJpYXQiOjE3NTc4MDA4MTQsImV4cCI6MTc1NzgxODgxNH0.D9wvDy4W5VuODc060rZpbXgPAy1PDFLB771sSLcK1qg"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5454/v1/user/profile",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5454",
+							"path": [
+								"v1",
+								"user",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AllUsers(dev only)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5454/v1/user/GetAll",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5454",
+							"path": [
+								"v1",
+								"user",
+								"GetAll"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "## API Endpoints\n\n### Authentication Services (User)\n\n- [Signup](https://request/33016627-584cfa10-57c8-48f0-b029-18666bc01aef): Register a new user account.\n    \n- [Login](https://request/33016627-ac9e0622-7551-4442-8cf1-2cd819998fcd): Authenticate a user and obtain a token.\n    \n- [User Profiles](https://request/33016627-e4d1fc9e-9cd5-4395-8340-8ce1f0562bd0): Get profile information of the authenticated user."
+		},
+		{
+			"name": "ResturantAdmin",
+			"item": [
+				{
+					"name": "GetAllUser(only for Testing)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5454/api/admin/restaurants/restaurant",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5454",
+							"path": [
+								"api",
+								"admin",
+								"restaurants",
+								"restaurant"
+							]
+						},
+						"description": "Retrieve all users (for testing purposes only)."
+					},
+					"response": []
+				},
+				{
+					"name": "CreateRestaurant",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer <YOUR_JWT_TOKEN>",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"56naan\",\n  \"description\": \"Authentic Italian cuisine with wood-fired pizzas and homemade pasta\",\n  \"cusineType\": \"Indian\",\n  \"address\": {\n    \"streetAddress\": \"456 Pasta Street\",\n    \"city\": \"Little Italy\",\n    \"state\": \"NY\",\n    \"zipCode\": \"10013\",\n    \"country\": \"USA\"\n  },\n  \"contactInformation\": {\n    \"email\": \"info@bellanapoli.com\",\n    \"mobile\": \"+1-212-555-7890\",\n    \"phone\": \"+1-212-555-1234\"\n  },\n  \"openingHours\": \"Mon-Sun: 11:00 AM - 11:00 PM\",\n  \"images\": [\n    \"https://example.com/images/bella_napoli1.jpg\",\n    \"https://example.com/images/bella_napoli2.jpg\"\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5454/api/admin/restaurants/create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5454",
+							"path": [
+								"api",
+								"admin",
+								"restaurants",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateRestaurantStatus",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqYWkiLCJpYXQiOjE3NTc4MDA4MTQsImV4cCI6MTc1NzgxODgxNH0.D9wvDy4W5VuODc060rZpbXgPAy1PDFLB771sSLcK1qg",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/restaurants/{{restaurantId}}/status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"restaurants",
+								"{{restaurantId}}",
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetResturantByID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/restaurants/{{restaurantId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"restaurants",
+								"{{restaurantId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateResturantByID",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer <YOUR_JWT_TOKEN>",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 1,\n    \"name\": \"Bella Napoli\",\n    \"description\": \"Authentic Italian cuisine with wood-fired pizzas and homemade pasta\",\n    \"cusineType\": \"Italian\",\n    \"address\": {\n        \"street\": null,\n        \"city\": \"Little Italy\",\n        \"zipCode\": \"10013\",\n        \"country\": \"USA\"\n    },\n    \"contactInformation\": {\n        \"email\": \"info@bellanapoli.com\",\n        \"mobile\": \"+1-212-555-7890\",\n        \"twitter\": null,\n        \"instagram\": null,\n        \"facebook\": null\n    },\n    \"openingHours\": \"Mon-Sun: 11:00 AM - 11:00 PM\",\n    \"images\": [\n        \"https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80\",\n        \"https://images.unsplash.com/photo-1552566626-52f8b828add9?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8cmVzdGF1cmFudHxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80\"\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/restaurants/update/{{resturant id}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"restaurants",
+								"update",
+								"{{resturant id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "### Restaurant Administration\n\n- [GetAllUser(only for Testing)](https://request/33016627-a0a9927a-018d-445b-bd15-bea2408dd8c5): Retrieve all users (for testing purposes only).\n    \n- [CreateRestaurant](https://request/33016627-cbf86081-f93a-4772-b788-3b6748ce9ebb): Create a new restaurant entry.\n    \n- [UpdateRestaurantStatus](https://request/33016627-2f79525f-0aec-4bba-a84d-f1e8e165a630): Update the status of a restaurant by its ID.\n    \n- [GetResturantByID](https://request/33016627-cb84f719-865b-43f8-aec9-f707d6413d66): Get details of a restaurant by its ID.\n    \n- [UpdateResturantByID](https://request/33016627-0c1a4de9-f596-4a3f-a461-cb40280e69e8): Update details of a restaurant by its ID."
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "GetAllFood",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "pageNo",
+								"value": "1",
+								"type": "text"
+							},
+							{
+								"key": "pagesize",
+								"value": "10",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/v1/api/admin/Food/getFood/{{Veg or NonVeg(String}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"api",
+								"admin",
+								"Food",
+								"getFood",
+								"{{Veg or NonVeg(String}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "MemoryManagement-suggest-gc",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/memory/suggest-gc",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"memory",
+								"suggest-gc"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "MemoryManagement-Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/memory/status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"memory",
+								"status"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ResturantCustomer",
+			"item": [
+				{
+					"name": "SearchRestaurants",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/customer/restaurants/search/{{Search KeyWord}} ",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"customer",
+								"restaurants",
+								"search",
+								"{{Search KeyWord}} "
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FindAllResturants",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/customer/restaurants/allRestaurants?pageNo={{number}}&pageSize={{size}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"customer",
+								"restaurants",
+								"allRestaurants"
+							],
+							"query": [
+								{
+									"key": "pageNo",
+									"value": "{{number}}",
+									"description": "Number OF pages"
+								},
+								{
+									"key": "pageSize",
+									"value": "{{size}}",
+									"description": "Size Of a page"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetResturantByID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/restaurants/{{restaurantId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"restaurants",
+								"{{restaurantId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "addToFavorites",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/customer/restaurants/{{restaurantId}}/favorite",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"customer",
+								"restaurants",
+								"{{restaurantId}}",
+								"favorite"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "# ResturantCustomer\n\nCustomer-facing endpoints for discovering restaurants and managing favorites.\n\n## Endpoints\n\n1) SearchRestaurants\n\n- GET /api/customer/restaurants/search/{{Search KeyWord}}\n    \n- Vars: baseUrl, Search KeyWord (text to match)\n    \n- Success: 200\n    \n- Finds restaurants matching a keyword.\n    \n\n2) FindAllResturants\n\n- GET /api/customer/restaurants/allRestaurants?pageNo={{number}}&pageSize={{size}}\n    \n- Vars: baseUrl, number (page index, default 0), size (page size, default 10)\n    \n- Success: 200\n    \n- Returns a paginated list of restaurants.\n    \n\n3) GetResturantByID\n\n- GET /api/admin/restaurants/{{restaurantId}}\n    \n- Vars: baseUrl, restaurantId (UUID/ID)\n    \n- Success: 200\n    \n- Retrieves a restaurant by its ID.\n    \n\n4) addToFavorites\n\n- PUT /api/customer/restaurants/{{restaurantId}}/favorite\n    \n- Vars: baseUrl, restaurantId (target to favorite)\n    \n- Success: 200 or 204\n    \n- Adds or toggles a restaurant in customer favorites.\n    \n\n## Variables\n\n- baseUrl should point to your FoodDeliveryApp API server. Set baseUrl and other variables (Search KeyWord, number, size, restaurantId) in an active environment.\n    \n\n## Quick Start\n\n1) Select an environment and set required variables.  \n2) Open a request above and click Send.",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"// No pre-request logic required for the folder at this time.",
+							"// Keeping this script empty intentionally."
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Food",
+			"item": [
+				{
+					"name": "Create Food",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer YOUR_JWT_TOKEN",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \" Butter Masala 3\",\n    \"description\": \"Creamy paneer in rich tomato gravy\",\n    \"price\": 199,\n    \"category\": {\n        \"id\": 1\n    },\n    \"images\": [\n        \"paneer_masala.jpg\"\n    ],\n    \"restaurantId\": 1,\n    \"vegetarian\": true,\n    \"seasonal\": false,\n    \"ingredients\": [\n        {\n            \"name\": \"Paneer\",\n            \"category\": {\n                \"id\": 3\n            },\n            \"inStock\": true\n        },\n        {\n            \"name\": \"Tomato\",\n            \"category\": {\n                \"id\": 4\n            },\n            \"inStock\": true\n        }\n    ]\n}\n\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/v1/api/Restaurant/Food",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"api",
+								"Restaurant",
+								"Food"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Createbulk(only Admin)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n    {\n        \"name\": \"Paneer Butter Masala\",\n        \"description\": \"Creamy paneer in rich tomato gravy\",\n        \"price\": 199,\n        \"category\": {\n            \"id\": 3\n        },\n        \"images\": [\n            \"paneer_masala.jpg\"\n        ],\n        \"restaurantId\": 1,\n        \"vegetarian\": true,\n        \"seasonal\": false,\n        \"ingredients\": [\n            {\n                \"name\": \"Paneer\",\n                \"category\": {\n                    \"id\": 2\n                },\n                \"inStock\": true\n            },\n            {\n                \"name\": \"Tomato\",\n                \"category\": {\n                    \"id\": 5\n                },\n                \"inStock\": true\n            }\n        ]\n    },\n    {\n        \"name\": \"Chicken Biryani\",\n        \"description\": \"Aromatic rice with tender chicken pieces\",\n        \"price\": 299,\n        \"category\": {\n            \"id\": 6\n        },\n        \"images\": [\n            \"chicken_biryani.jpg\"\n        ],\n        \"restaurantId\": 2,\n        \"vegetarian\": false,\n        \"seasonal\": false,\n        \"ingredients\": [\n            {\n                \"name\": \"Chicken\",\n                \"category\": {\n                    \"id\": 1\n                },\n                \"inStock\": true\n            },\n            {\n                \"name\": \"Basmati Rice\",\n                \"category\": {\n                    \"id\": 4\n                },\n                \"inStock\": true\n            }\n        ]\n    },\n    {\n        \"name\": \"Vegetable Pizza\",\n        \"description\": \"Fresh vegetables on cheesy pizza base\",\n        \"price\": 349,\n        \"category\": {\n            \"id\": 2\n        },\n        \"images\": [\n            \"veg_pizza.jpg\"\n        ],\n        \"restaurantId\": 1,\n        \"vegetarian\": true,\n        \"seasonal\": false,\n        \"ingredients\": [\n            {\n                \"name\": \"Cheese\",\n                \"category\": {\n                    \"id\": 3\n                },\n                \"inStock\": true\n            },\n            {\n                \"name\": \"Bell Peppers\",\n                \"category\": {\n                    \"id\": 5\n                },\n                \"inStock\": true\n            }\n        ]\n    },\n    {\n        \"name\": \"Fish Curry\",\n        \"description\": \"Spicy fish in coconut gravy\",\n        \"price\": 259,\n        \"category\": {\n            \"id\": 7\n        },\n        \"images\": [\n            \"fish_curry.jpg\"\n        ],\n        \"restaurantId\": 2,\n        \"vegetarian\": false,\n        \"seasonal\": false,\n        \"ingredients\": [\n            {\n                \"name\": \"Fish\",\n                \"category\": {\n                    \"id\": 1\n                },\n                \"inStock\": true\n            },\n            {\n                \"name\": \"Coconut\",\n                \"category\": {\n                    \"id\": 6\n                },\n                \"inStock\": true\n            }\n        ]\n    },\n    {\n        \"name\": \"Chocolate Brownie\",\n        \"description\": \"Rich chocolate brownie with walnuts\",\n        \"price\": 129,\n        \"category\": {\n            \"id\": 4\n        },\n        \"images\": [\n            \"chocolate_brownie.jpg\"\n        ],\n        \"restaurantId\": 1,\n        \"vegetarian\": true,\n        \"seasonal\": false,\n        \"ingredients\": [\n            {\n                \"name\": \"Chocolate\",\n                \"category\": {\n                    \"id\": 7\n                },\n                \"inStock\": true\n            },\n            {\n                \"name\": \"Flour\",\n                \"category\": {\n                    \"id\": 4\n                },\n                \"inStock\": true\n            }\n        ]\n    },\n    {\n        \"name\": \"Mutton Rogan Josh\",\n        \"description\": \"Kashmiri style mutton curry\",\n        \"price\": 399,\n        \"category\": {\n            \"id\": 5\n        },\n        \"images\": [\n            \"mutton_rogan_josh.jpg\"\n        ],\n        \"restaurantId\": 2,\n        \"vegetarian\": false,\n        \"seasonal\": false,\n        \"ingredients\": [\n            {\n                \"name\": \"Mutton\",\n                \"category\": {\n                    \"id\": 1\n                },\n                \"inStock\": true\n            },\n            {\n                \"name\": \"Spices\",\n                \"category\": {\n                    \"id\": 3\n                },\n                \"inStock\": true\n            }\n        ]\n    },\n    {\n        \"name\": \"Caesar Salad\",\n        \"description\": \"Fresh greens with caesar dressing\",\n        \"price\": 179,\n        \"category\": {\n            \"id\": 1\n        },\n        \"images\": [\n            \"caesar_salad.jpg\"\n        ],\n        \"restaurantId\": 1,\n        \"vegetarian\": true,\n        \"seasonal\": false,\n        \"ingredients\": [\n            {\n                \"name\": \"Lettuce\",\n                \"category\": {\n                    \"id\": 5\n                },\n                \"inStock\": true\n            },\n            {\n                \"name\": \"Croutons\",\n                \"category\": {\n                    \"id\": 4\n                },\n                \"inStock\": true\n            }\n        ]\n    },\n    {\n        \"name\": \"Butter Chicken\",\n        \"description\": \"Tender chicken in buttery tomato gravy\",\n        \"price\": 329,\n        \"category\": {\n            \"id\": 3\n        },\n        \"images\": [\n            \"butter_chicken.jpg\"\n        ],\n        \"restaurantId\": 2,\n        \"vegetarian\": false,\n        \"seasonal\": false,\n        \"ingredients\": [\n            {\n                \"name\": \"Chicken\",\n                \"category\": {\n                    \"id\": 1\n                },\n                \"inStock\": true\n            },\n            {\n                \"name\": \"Butter\",\n                \"category\": {\n                    \"id\": 2\n                },\n                \"inStock\": true\n            }\n        ]\n    },\n    {\n        \"name\": \"Dal Tadka\",\n        \"description\": \"Tempered lentil curry\",\n        \"price\": 149,\n        \"category\": {\n            \"id\": 6\n        },\n        \"images\": [\n            \"dal_tadka.jpg\"\n        ],\n        \"restaurantId\": 1,\n        \"vegetarian\": true,\n        \"seasonal\": false,\n        \"ingredients\": [\n            {\n                \"name\": \"Lentils\",\n                \"category\": {\n                    \"id\": 4\n                },\n                \"inStock\": true\n            },\n            {\n                \"name\": \"Spices\",\n                \"category\": {\n                    \"id\": 3\n                },\n                \"inStock\": true\n            }\n        ]\n    },\n    {\n        \"name\": \"Grilled Sandwich\",\n        \"description\": \"Toasted sandwich with vegetable filling\",\n        \"price\": 99,\n        \"category\": {\n            \"id\": 2\n        },\n        \"images\": [\n            \"grilled_sandwich.jpg\"\n        ],\n        \"restaurantId\": 2,\n        \"vegetarian\": true,\n        \"seasonal\": false,\n        \"ingredients\": [\n            {\n                \"name\": \"Bread\",\n                \"category\": {\n                    \"id\": 4\n                },\n                \"inStock\": true\n            },\n            {\n                \"name\": \"Vegetables\",\n                \"category\": {\n                    \"id\": 5\n                },\n                \"inStock\": true\n            }\n        ]\n    }\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/v1/api/Restaurant/Food/bulk",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"api",
+								"Restaurant",
+								"Food",
+								"bulk"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getRestaurantFoods",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/v1/api/Food/restaurants/{{ResturantID}}/foods?isVeg=false&isSeasonal=false&foodCategory={{foodCategory}}&page={{pageNumber}}&size={{pageSize}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"api",
+								"Food",
+								"restaurants",
+								"{{ResturantID}}",
+								"foods"
+							],
+							"query": [
+								{
+									"key": "isVeg",
+									"value": "false",
+									"description": "false/true"
+								},
+								{
+									"key": "isSeasonal",
+									"value": "false",
+									"description": "false/true"
+								},
+								{
+									"key": "foodCategory",
+									"value": "{{foodCategory}}",
+									"description": "Main Course ,Appetizer ,Dessert Beverage ,Fast Food ,Vegetarian Non-Vegetarian"
+								},
+								{
+									"key": "page",
+									"value": "{{pageNumber}}"
+								},
+								{
+									"key": "size",
+									"value": "{{pageSize}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "search Food",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/v1/api/Food/restaurants/ch/search",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"api",
+								"Food",
+								"restaurants",
+								"ch",
+								"search"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteFood",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/v1/api/Restaurant/Food/delete/{{food id}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"api",
+								"Restaurant",
+								"Food",
+								"delete",
+								"{{food id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Food Category",
+			"item": [
+				{
+					"name": "CreateCategory",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": {{Resturant ID}},\n    \"name\": \"{{Name of New Category}}\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/category/create",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"category",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getCategorybyId",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": {{Resturant ID}},\n    \"name\": \"{{Name of New Category}}\"\n  }"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/category/find/{{CategoryId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"category",
+								"find",
+								"{{CategoryId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetCategoriesByResturantID",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": {{Resturant ID}},\n    \"name\": \"{{Name of New Category}}\"\n  }"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/category/find/categories/{{restaurantId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"category",
+								"find",
+								"categories",
+								"{{restaurantId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "IngredientsCategory",
+			"item": [
+				{
+					"name": "CreateIngredientCategory",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/IngredientCategory/create/{{categoryName}}}/{{restaurantId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"IngredientCategory",
+								"create",
+								"{{categoryName}}}",
+								"{{restaurantId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "IngredientCategoryById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/IngredientCategory/{{category id}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"IngredientCategory",
+								"{{category id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "IngredientCategoriesByRestaurantId",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/IngredientCategory/Ingredient/{{restaurantId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"IngredientCategory",
+								"Ingredient",
+								"{{restaurantId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "IngredientsItems",
+			"item": [
+				{
+					"name": "IngredientItemsByRestaurantId",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/IngredientList/restaurant/{{restaurantId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"IngredientList",
+								"restaurant",
+								"{{restaurantId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "createIngredientItem",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/IngredientList/createIngredientItem/{{restaurantId}}/{{ingredientName}}/{{categoryId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"IngredientList",
+								"createIngredientItem",
+								"{{restaurantId}}",
+								"{{ingredientName}}",
+								"{{categoryId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateIngredientItemStock",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cart",
+			"item": [
+				{
+					"name": "add-item",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer YOUR_JWT_TOKEN"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"foodId\": 155,\n    \"quantity\": 3,\n    \"ingredients\": [\"butter\", \"naan\"]\n  }\n\n  ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/api/Customer/Cart/add-item",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"Customer",
+								"Cart",
+								"add-item"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateCartItem",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer YOUR_JWT_TOKEN"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"foodId\": 155,\n    \"quantity\": 3,\n    \"ingredients\": [\"butter\", \"naan\"]\n  }\n\n  "
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/api/Customer/Cart/updateCartItem",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"Customer",
+								"Cart",
+								"updateCartItem"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RemoveItemFromCart",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer YOUR_JWT_TOKEN"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"foodId\": 155,\n    \"quantity\": 3,\n    \"ingredients\": [\"butter\", \"naan\"]\n  }\n\n  "
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/api/Customer/Cart/delete/{{cartItemId}}",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"Customer",
+								"Cart",
+								"delete",
+								"{{cartItemId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Order",
+			"item": [
+				{
+					"name": "Create Order",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer <YOUR_JWT_TOKEN>",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"restaurantId\": 1,\n  \"deliveryAddress\": {\n    \"street\": \"MG Road\",\n    \"city\": \"Mumbai\",\n    \"state\": \"Maharashtra\",\n    \"pincode\": \"400001\",\n    \"country\": \"India\"\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5454/v1/api/customer/order/create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5454",
+							"path": [
+								"v1",
+								"api",
+								"customer",
+								"order",
+								"create"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "apikey",
+		"apikey": [
+			{
+				"key": "key",
+				"value": "X-API-Key",
+				"type": "string"
+			},
+			{
+				"key": "value",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://farming-simulator.pstmn.io"
+		}
+	]
+}

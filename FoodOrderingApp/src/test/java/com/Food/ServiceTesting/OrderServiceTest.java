@@ -108,7 +108,7 @@ public class OrderServiceTest {
 
     @Test
     void upadateorder() throws Exception {
-        orderService.updateOrder(2L,"PREPARING");
+        orderService.updateOrder(2L, com.Food.Model.OrderStatus.valueOf("PREPARING"));
     }
     @Test
     void deleteorder() throws Exception {
